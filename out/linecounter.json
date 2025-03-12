@@ -1,0 +1,351 @@
+{
+    "extension": "linecounter",
+    "version": "0.2.7",
+    "workspace": "f:\\React Native + Typescript\\React-native-app",
+    "linecount": [
+        {
+            "version": "0.2.7",
+            "counttime": "2025-03-12 14:53:46",
+            "filesum": 48,
+            "codesum": 14330,
+            "commentsum": 54,
+            "blanksum": 164,
+            "statistics": {
+                ".ts": {
+                    "code": 188,
+                    "comment": 19,
+                    "blank": 27
+                },
+                ".json": {
+                    "code": 13355,
+                    "comment": 0,
+                    "blank": 23
+                },
+                "": {
+                    "code": 32,
+                    "comment": 1,
+                    "blank": 9
+                },
+                ".md": {
+                    "code": 33,
+                    "comment": 5,
+                    "blank": 21
+                },
+                ".tsx": {
+                    "code": 632,
+                    "comment": 18,
+                    "blank": 69
+                },
+                ".js": {
+                    "code": 68,
+                    "comment": 10,
+                    "blank": 14
+                },
+                ".snap": {
+                    "code": 22,
+                    "comment": 1,
+                    "blank": 1
+                }
+            },
+            "filelist": [
+                {
+                    "blank": 0,
+                    "code": 1,
+                    "comment": 0,
+                    "filename": ".env"
+                },
+                {
+                    "blank": 0,
+                    "code": 2,
+                    "comment": 0,
+                    "filename": ".gitattributes"
+                },
+                {
+                    "blank": 0,
+                    "code": 3,
+                    "comment": 0,
+                    "filename": "ReactNative-App\\.expo\\devices.json"
+                },
+                {
+                    "blank": 6,
+                    "code": 9,
+                    "comment": 0,
+                    "filename": "ReactNative-App\\.expo\\README.md"
+                },
+                {
+                    "blank": 0,
+                    "code": 8,
+                    "comment": 0,
+                    "filename": "ReactNative-App\\.expo\\settings.json"
+                },
+                {
+                    "blank": 2,
+                    "code": 11,
+                    "comment": 1,
+                    "filename": "ReactNative-App\\.expo\\types\\router.d.ts"
+                },
+                {
+                    "blank": 9,
+                    "code": 29,
+                    "comment": 1,
+                    "filename": "ReactNative-App\\.gitignore"
+                },
+                {
+                    "blank": 0,
+                    "code": 41,
+                    "comment": 0,
+                    "filename": "ReactNative-App\\app.json"
+                },
+                {
+                    "blank": 3,
+                    "code": 46,
+                    "comment": 1,
+                    "filename": "ReactNative-App\\app\\(tabs)\\_layout.tsx"
+                },
+                {
+                    "blank": 2,
+                    "code": 81,
+                    "comment": 0,
+                    "filename": "ReactNative-App\\app\\(tabs)\\explore.tsx"
+                },
+                {
+                    "blank": 10,
+                    "code": 78,
+                    "comment": 0,
+                    "filename": "ReactNative-App\\app\\(tabs)\\index.tsx"
+                },
+                {
+                    "blank": 2,
+                    "code": 10,
+                    "comment": 0,
+                    "filename": "ReactNative-App\\app\\+not-found.tsx"
+                },
+                {
+                    "blank": 5,
+                    "code": 39,
+                    "comment": 1,
+                    "filename": "ReactNative-App\\app\\_layout.tsx"
+                },
+                {
+                    "blank": 7,
+                    "code": 59,
+                    "comment": 5,
+                    "filename": "ReactNative-App\\assets\\config\\aiPrompts.ts"
+                },
+                {
+                    "filename": "ReactNative-App\\assets\\fonts\\SpaceMono-Regular.ttf",
+                    "isbinaryfile": true,
+                    "blank": 0,
+                    "code": 0,
+                    "comment": 0
+                },
+                {
+                    "filename": "ReactNative-App\\assets\\images\\adaptive-icon.png",
+                    "isbinaryfile": true,
+                    "blank": 0,
+                    "code": 0,
+                    "comment": 0
+                },
+                {
+                    "filename": "ReactNative-App\\assets\\images\\favicon.png",
+                    "isbinaryfile": true,
+                    "blank": 0,
+                    "code": 0,
+                    "comment": 0
+                },
+                {
+                    "filename": "ReactNative-App\\assets\\images\\icon.png",
+                    "isbinaryfile": true,
+                    "blank": 0,
+                    "code": 0,
+                    "comment": 0
+                },
+                {
+                    "filename": "ReactNative-App\\assets\\images\\partial-react-logo.png",
+                    "isbinaryfile": true,
+                    "blank": 0,
+                    "code": 0,
+                    "comment": 0
+                },
+                {
+                    "filename": "ReactNative-App\\assets\\images\\react-logo.png",
+                    "isbinaryfile": true,
+                    "blank": 0,
+                    "code": 0,
+                    "comment": 0
+                },
+                {
+                    "filename": "ReactNative-App\\assets\\images\\react-logo@2x.png",
+                    "isbinaryfile": true,
+                    "blank": 0,
+                    "code": 0,
+                    "comment": 0
+                },
+                {
+                    "filename": "ReactNative-App\\assets\\images\\react-logo@3x.png",
+                    "isbinaryfile": true,
+                    "blank": 0,
+                    "code": 0,
+                    "comment": 0
+                },
+                {
+                    "filename": "ReactNative-App\\assets\\images\\splash-icon.png",
+                    "isbinaryfile": true,
+                    "blank": 0,
+                    "code": 0,
+                    "comment": 0
+                },
+                {
+                    "blank": 7,
+                    "code": 70,
+                    "comment": 0,
+                    "filename": "ReactNative-App\\assets\\services\\ai\\deepseek.ts"
+                },
+                {
+                    "blank": 1,
+                    "code": 22,
+                    "comment": 1,
+                    "filename": "ReactNative-App\\components\\__tests__\\__snapshots__\\ThemedText-test.tsx.snap"
+                },
+                {
+                    "blank": 3,
+                    "code": 7,
+                    "comment": 0,
+                    "filename": "ReactNative-App\\components\\__tests__\\ThemedText-test.tsx"
+                },
+                {
+                    "blank": 5,
+                    "code": 40,
+                    "comment": 0,
+                    "filename": "ReactNative-App\\components\\Collapsible.tsx"
+                },
+                {
+                    "blank": 2,
+                    "code": 20,
+                    "comment": 2,
+                    "filename": "ReactNative-App\\components\\ExternalLink.tsx"
+                },
+                {
+                    "blank": 1,
+                    "code": 16,
+                    "comment": 1,
+                    "filename": "ReactNative-App\\components\\HapticTab.tsx"
+                },
+                {
+                    "blank": 6,
+                    "code": 34,
+                    "comment": 1,
+                    "filename": "ReactNative-App\\components\\HelloWave.tsx"
+                },
+                {
+                    "blank": 6,
+                    "code": 76,
+                    "comment": 0,
+                    "filename": "ReactNative-App\\components\\ParallaxScrollView.tsx"
+                },
+                {
+                    "blank": 5,
+                    "code": 55,
+                    "comment": 0,
+                    "filename": "ReactNative-App\\components\\ThemedText.tsx"
+                },
+                {
+                    "blank": 4,
+                    "code": 10,
+                    "comment": 0,
+                    "filename": "ReactNative-App\\components\\ThemedView.tsx"
+                },
+                {
+                    "blank": 1,
+                    "code": 31,
+                    "comment": 0,
+                    "filename": "ReactNative-App\\components\\ui\\IconSymbol.ios.tsx"
+                },
+                {
+                    "blank": 4,
+                    "code": 30,
+                    "comment": 9,
+                    "filename": "ReactNative-App\\components\\ui\\IconSymbol.tsx"
+                },
+                {
+                    "blank": 2,
+                    "code": 18,
+                    "comment": 2,
+                    "filename": "ReactNative-App\\components\\ui\\TabBarBackground.ios.tsx"
+                },
+                {
+                    "blank": 1,
+                    "code": 4,
+                    "comment": 1,
+                    "filename": "ReactNative-App\\components\\ui\\TabBarBackground.tsx"
+                },
+                {
+                    "blank": 2,
+                    "code": 20,
+                    "comment": 4,
+                    "filename": "ReactNative-App\\constants\\Colors.ts"
+                },
+                {
+                    "blank": 7,
+                    "code": 37,
+                    "comment": 0,
+                    "filename": "ReactNative-App\\contexts\\WorkoutContext.tsx"
+                },
+                {
+                    "blank": 1,
+                    "code": 0,
+                    "comment": 2,
+                    "filename": "ReactNative-App\\expo-env.d.ts"
+                },
+                {
+                    "blank": 0,
+                    "code": 1,
+                    "comment": 0,
+                    "filename": "ReactNative-App\\hooks\\useColorScheme.ts"
+                },
+                {
+                    "blank": 5,
+                    "code": 13,
+                    "comment": 3,
+                    "filename": "ReactNative-App\\hooks\\useColorScheme.web.ts"
+                },
+                {
+                    "blank": 3,
+                    "code": 14,
+                    "comment": 4,
+                    "filename": "ReactNative-App\\hooks\\useThemeColor.ts"
+                },
+                {
+                    "blank": 21,
+                    "code": 13234,
+                    "comment": 0,
+                    "filename": "ReactNative-App\\package-lock.json"
+                },
+                {
+                    "blank": 0,
+                    "code": 54,
+                    "comment": 0,
+                    "filename": "ReactNative-App\\package.json"
+                },
+                {
+                    "blank": 15,
+                    "code": 24,
+                    "comment": 5,
+                    "filename": "ReactNative-App\\README.md"
+                },
+                {
+                    "blank": 14,
+                    "code": 68,
+                    "comment": 10,
+                    "filename": "ReactNative-App\\scripts\\reset-project.js"
+                },
+                {
+                    "blank": 2,
+                    "code": 15,
+                    "comment": 0,
+                    "filename": "ReactNative-App\\tsconfig.json"
+                }
+            ]
+        }
+    ]
+}
