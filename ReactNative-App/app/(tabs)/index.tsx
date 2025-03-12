@@ -1,19 +1,13 @@
 import { useState, useEffect } from "react";
-import {
-  Image,
-  StyleSheet,
-  Platform,
-  TouchableOpacity,
-  Text,
-} from "react-native";
-
+import { Image, StyleSheet, TouchableOpacity, Text, View } from "react-native";
+import { WorkoutPlanDisplay } from "@/components/WorkoutPlanDisplay";
 import { useWorkout } from "../../contexts/WorkoutContext";
 import ParallaxScrollView from "@/components/ParallaxScrollView";
 import { generateWorkoutPlan } from "../../assets/services/ai/deepseek";
 export default function HomeScreen() {
   const { updateWorkoutData, workoutData } = useWorkout();
   const [plan, setPlan] = useState<any | null>(null);
-
+  const [loading, setLoading] = useState(false);
   const handleSetFields = () => {
     updateWorkoutData({
       gender: "male",
@@ -26,8 +20,9 @@ export default function HomeScreen() {
   useEffect(() => {
     handleSetFields();
   }, []);
-
+  let MAX_RETRIES = 3;
   const generatePlan = async () => {
+    setLoading(true);
     if (!workoutData.goal || !workoutData.level) return;
 
     for (let i = 0; i < MAX_RETRIES; i++) {
@@ -36,37 +31,43 @@ export default function HomeScreen() {
       if (generatedPlan) {
         console.log("Generated plan:", generatedPlan);
         setPlan(generatedPlan);
-
+        setLoading(false);
         return;
       } else {
         console.log(`Attempt ${i + 1} failed. Retrying...`);
       }
     }
-
+    setLoading(false);
     console.log("Failed to generate workout plan after multiple attempts.");
   };
 
-  let MAX_RETRIES = 3;
-
   return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: "#A1CEDC", dark: "#1D3D47" }}
-      headerImage={
-        <Image
-          source={require("@/assets/images/partial-react-logo.png")}
-          style={styles.reactLogo}
-        />
-      }
-    >
-      <TouchableOpacity
-        onPress={() => {
-          generatePlan();
-        }}
-        style={styles.generateButton}
+    <View style={{ flex: 1 }}>
+      <ParallaxScrollView
+        headerBackgroundColor={{ light: "black", dark: "black" }}
+        headerImage={
+          <Image
+            source={require("@/assets/images/background.jpg")}
+            style={styles.reactLogo}
+          />
+        }
       >
-        <Text> jemppaisen konne</Text>
-      </TouchableOpacity>
-    </ParallaxScrollView>
+        <TouchableOpacity
+          onPress={() => {
+            generatePlan();
+          }}
+          style={styles.generateButton}
+        >
+          <Text style={styles.title}> Generate your workout!</Text>
+        </TouchableOpacity>
+
+        {loading ? (
+          <Text style={styles.loadingText}>Generating workout plan...</Text>
+        ) : (
+          <WorkoutPlanDisplay plan={plan} />
+        )}
+      </ParallaxScrollView>
+    </View>
   );
 }
 
@@ -76,21 +77,37 @@ const styles = StyleSheet.create({
     alignItems: "center",
     gap: 8,
   },
+  title: {
+    textAlign: "center",
+    fontSize: 20,
+    fontWeight: "400",
+    color: "#FFFFFF",
+  },
   stepContainer: {
     gap: 8,
     marginBottom: 8,
   },
   generateButton: {
-    backgroundColor: "#FFD700",
-    padding: 100,
-    borderRadius: 600,
+    backgroundColor: "black",
+    width: 200,
+    height: 100,
+    justifyContent: "center",
+    alignItems: "center",
+    borderRadius: 30,
+    borderCurve: "continuous",
     alignSelf: "center",
+    marginBottom: 30,
+    marginTop: 30,
   },
   reactLogo: {
-    height: 178,
-    width: 290,
-    bottom: 0,
-    left: 0,
-    position: "absolute",
+    resizeMode: "cover",
+    width: "100%",
+    height: "100%",
+  },
+  loadingText: {
+    color: "#FFFFFF",
+    fontSize: 16,
+    textAlign: "center",
+    marginTop: 20,
   },
 });

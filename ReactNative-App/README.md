@@ -1,50 +1,76 @@
-# Welcome to your Expo app 👋
+# Workout Generator App
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+A React Native application that generates personalized workout plans using AI. Built with Expo and TypeScript.
 
-## Get started
+## Features
 
-1. Install dependencies
+**AI-Powered Workout Plans**: Generates customized workouts based on:
 
-   ```bash
-   npm install
-   ```
+- Fitness goals (Build Muscle, Lose Weight, Get Stronger, Stay Healthy)
+- Experience level
+- Available equipment
+- Workout duration
+- Gender preferences
 
-2. Start the app
+**Structured Workout Format**:
 
-   ```bash
-    npx expo start
-   ```
+- Warm-up exercises with durations
+- Main workout with sets, reps, and rest periods
+- Cool-down stretches
+- Detailed exercise descriptions
 
-In the output, you'll find options to open the app in a
+## Tech Stack
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+- React Native with Expo
+- TypeScript
+- Reanimated for animations
+- Deepseek AI API for workout generation
+- File-based routing with Expo Router
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+## Getting Started
 
-## Get a fresh project
-
-When you're ready, run:
+1. Clone the repository:
 
 ```bash
-npm run reset-project
+git clone [your-repo-url]
+cd ReactNative-App
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+2. Install dependencies:
 
-## Learn more
+```bash
+npm install
+```
 
-To learn more about developing your project with Expo, look at the following resources:
+3. Set up environment variables:
+   Create a `.env` file in the root directory:
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+```plaintext
+EXPO_PUBLIC_DEEPSEEK_API_KEY=your_api_key_here
+```
 
-## Join the community
+4. Start the development server:
 
-Join our community of developers creating universal apps.
+```bash
+npx expo start
+```
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+## Project Structure
+
+```
+ReactNative-App/
+├── app/                    # Main application code
+│   ├── (tabs)/            # Tab-based navigation
+│   └── _layout.tsx        # Root layout configuration
+├── assets/                # Static assets and images
+├── components/            # Reusable UI components
+├── contexts/              # React Context providers
+└── services/             # API  logic
+```
+
+## Screenshots
+
+![alt text](ShowCaseImages/IMG_1926.png)
+![alt text](ShowCaseImages/IMG_1927.png)
+![alt text](ShowCaseImages/IMG_1924.png)
+![alt text](ShowCaseImages/IMG_1925.png)
