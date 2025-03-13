@@ -1,5 +1,12 @@
 import { useState, useEffect } from "react";
-import { Image, StyleSheet, TouchableOpacity, Text, View } from "react-native";
+import {
+  Image,
+  StyleSheet,
+  TouchableOpacity,
+  Text,
+  View,
+  ActivityIndicator,
+} from "react-native";
 import { WorkoutPlanDisplay } from "@/components/WorkoutPlanDisplay";
 import { useWorkout } from "../../contexts/WorkoutContext";
 import ParallaxScrollView from "@/components/ParallaxScrollView";
@@ -8,6 +15,7 @@ export default function HomeScreen() {
   const { updateWorkoutData, workoutData } = useWorkout();
   const [plan, setPlan] = useState<any | null>(null);
   const [loading, setLoading] = useState(false);
+  const [showErrorMessage, setShowErrorMessage] = useState(false);
   const handleSetFields = () => {
     updateWorkoutData({
       gender: "male",
@@ -23,22 +31,36 @@ export default function HomeScreen() {
   let MAX_RETRIES = 3;
   const generatePlan = async () => {
     setLoading(true);
-    if (!workoutData.goal || !workoutData.level) return;
-
-    for (let i = 0; i < MAX_RETRIES; i++) {
-      const generatedPlan = await generateWorkoutPlan(workoutData);
-
-      if (generatedPlan) {
-        console.log("Generated plan:", generatedPlan);
-        setPlan(generatedPlan);
-        setLoading(false);
-        return;
-      } else {
-        console.log(`Attempt ${i + 1} failed. Retrying...`);
+    try {
+      if (!workoutData.goal || !workoutData.level) {
+        throw new Error("Missing workout data");
       }
+      setShowErrorMessage(false);
+      for (let i = 0; i < MAX_RETRIES; i++) {
+        try {
+          const generatedPlan = await generateWorkoutPlan(workoutData);
+          if (generatedPlan) {
+            console.log("Generated plan:", generatedPlan);
+            setPlan(generatedPlan);
+            return;
+          }
+        } catch (error) {
+          console.error(`Attempt ${i + 1} failed:`, error);
+          if (i === MAX_RETRIES - 1) {
+            throw error;
+          }
+        }
+      }
+      throw new Error(
+        "Failed to generate workout plan after multiple attempts"
+      );
+    } catch (error) {
+      console.error("Error generating plan:", error);
+      setPlan(null);
+      setShowErrorMessage(true);
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
-    console.log("Failed to generate workout plan after multiple attempts.");
   };
 
   return (
@@ -58,11 +80,25 @@ export default function HomeScreen() {
           }}
           style={styles.generateButton}
         >
-          <Text style={styles.title}> Generate your workout!</Text>
+          <Text style={styles.title}> Generate Your Workout!</Text>
         </TouchableOpacity>
 
+        {showErrorMessage && (
+          <View style={styles.errorContainer}>
+            <Text style={styles.errorText}>
+              Error generating workout plan. Please try again.
+            </Text>
+          </View>
+        )}
         {loading ? (
-          <Text style={styles.loadingText}>Generating workout plan...</Text>
+          <View>
+            <ActivityIndicator
+              size="small"
+              color="#FFA500"
+              style={{ marginTop: 100 }}
+            />
+            <Text style={styles.loadingText}>Generating workout plan...</Text>
+          </View>
         ) : (
           <WorkoutPlanDisplay plan={plan} />
         )}
@@ -80,15 +116,15 @@ const styles = StyleSheet.create({
   title: {
     textAlign: "center",
     fontSize: 20,
-    fontWeight: "400",
-    color: "#FFFFFF",
+    fontWeight: "800",
+    color: "black",
   },
   stepContainer: {
     gap: 8,
     marginBottom: 8,
   },
   generateButton: {
-    backgroundColor: "black",
+    backgroundColor: "#FFA500",
     width: 200,
     height: 100,
     justifyContent: "center",
@@ -98,6 +134,13 @@ const styles = StyleSheet.create({
     alignSelf: "center",
     marginBottom: 30,
     marginTop: 30,
+    shadowColor: "#FFA500",
+    shadowOffset: {
+      width: 0,
+      height: 0,
+    },
+    shadowOpacity: 0.5,
+    shadowRadius: 10,
   },
   reactLogo: {
     resizeMode: "cover",
@@ -105,9 +148,32 @@ const styles = StyleSheet.create({
     height: "100%",
   },
   loadingText: {
-    color: "#FFFFFF",
+    color: "#FFA500",
     fontSize: 16,
+    fontWeight: "300",
     textAlign: "center",
     marginTop: 20,
+    alignSelf: "center",
+    justifyContent: "center",
+  },
+  errorContainer: {
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#F4405F",
+    padding: 20,
+    borderRadius: 20,
+    borderCurve: "continuous",
+    marginTop: 70,
+  },
+  errorText: {
+    color: "white",
+    fontSize: 18,
+    fontWeight: "300",
+    textAlign: "center",
+
+    alignSelf: "center",
+    justifyContent: "center",
   },
 });

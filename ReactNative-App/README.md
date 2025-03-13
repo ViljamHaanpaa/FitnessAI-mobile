@@ -70,7 +70,10 @@ ReactNative-App/
 
 ## Screenshots
 
-![alt text](ShowCaseImages/IMG_1926.png)
-![alt text](ShowCaseImages/IMG_1927.png)
-![alt text](ShowCaseImages/IMG_1924.png)
-![alt text](ShowCaseImages/IMG_1925.png)
+<div style="display: flex; flex-wrap: wrap; gap: 20px; justify-content: center;">
+  <img src="ShowCaseImages/IMG_1924.png" width="200" alt="Screenshot 3" />
+  <img src="ShowCaseImages/IMG_1925.png" width="200" alt="Screenshot 4" />
+  <img src="ShowCaseImages/IMG_1926.png" width="200" alt="Screenshot 1" />
+  <img src="ShowCaseImages/IMG_1927.png" width="200" alt="Screenshot 2" />
+  <img src="ShowCaseImages/IMG_1928.png" width="200" alt="Screenshot 2" />
+</div>

@@ -1,5 +1,5 @@
-import { View, Text, StyleSheet } from "react-native";
-
+import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
+import Icon from "@expo/vector-icons/FontAwesome";
 interface Exercise {
   name: string;
   sets?: number;
@@ -31,16 +31,18 @@ export const WorkoutPlanDisplay = ({ plan }: { plan: WorkoutPlan | null }) => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>{plan.title}</Text>
-
+      <View style={styles.Headersection}>
+        <Text style={styles.title}>{plan.title}</Text>
+        <TouchableOpacity onPress={() => {}} style={styles.saveButton}>
+          <Icon name="plus-circle" size={30} color="#FFA500" />
+        </TouchableOpacity>
+      </View>
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>Warmup ({plan.warmup.duration})</Text>
         {plan.warmup.exercises.map((exercise, index) => (
           <View key={index} style={styles.exercise}>
             <Text style={styles.exerciseName}>{exercise.name}</Text>
-            <Text style={styles.exerciseDuration}>
-              Duration: {exercise.duration}
-            </Text>
+            <Text style={styles.exerciseDuration}>{exercise.duration}</Text>
             <Text style={styles.exerciseDescription}>
               {exercise.description}
             </Text>
@@ -73,9 +75,7 @@ export const WorkoutPlanDisplay = ({ plan }: { plan: WorkoutPlan | null }) => {
         {plan.cooldown.stretches.map((stretch, index) => (
           <View key={index} style={styles.exercise}>
             <Text style={styles.exerciseName}>{stretch.name}</Text>
-            <Text style={styles.exerciseDuration}>
-              Duration: {stretch.duration}
-            </Text>
+            <Text style={styles.exerciseDuration}>{stretch.duration}</Text>
             <Text style={styles.exerciseDescription}>
               {stretch.description}
             </Text>
@@ -96,13 +96,17 @@ const styles = StyleSheet.create({
     marginBottom: 16,
     color: "#FFFFFF",
     alignSelf: "center",
-    textAlign: "center",
+  },
+  Headersection: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
   },
   section: {
     gap: 15,
   },
   sectionTitle: {
-    color: "#FFFFFF",
+    color: "#FFA500",
     fontSize: 22,
     fontWeight: "800",
     marginBottom: 8,
@@ -121,7 +125,7 @@ const styles = StyleSheet.create({
     fontWeight: "300",
   },
   exerciseDuration: {
-    color: "#FFFFFF",
+    color: "#FFA500",
     fontSize: 14,
     fontWeight: "400",
   },
@@ -129,5 +133,9 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "600",
     color: "#FFFFFF",
+  },
+  saveButton: {
+    bottom: 20,
+    left: 10,
   },
 });
