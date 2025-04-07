@@ -1,4 +1,4 @@
-import type { WorkoutData } from "../../../contexts/WorkoutContext";
+import { WorkoutData } from "@/types/workout";
 import { WORKOUT_PROMPT, formatWorkoutResponse } from "../../config/aiPrompts";
 const DEEPSEEK_API_KEY = process.env.EXPO_PUBLIC_DEEPSEEK_API_KEY;
 const API_URL = "https://api.deepseek.com/v1/chat/completions";

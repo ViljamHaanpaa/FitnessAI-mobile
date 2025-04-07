@@ -1,12 +1,6 @@
 import { createContext, useContext, useState, ReactNode } from "react";
-
-export interface WorkoutData {
-  gender: string;
-  goal: string;
-  level: string;
-  duration: string;
-  equipment: string;
-}
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { WorkoutPlan, WorkoutData } from "@/types/workout";
 
 interface WorkoutContextType {
   workoutData: WorkoutData;
@@ -14,6 +8,33 @@ interface WorkoutContextType {
 }
 
 const WorkoutContext = createContext<WorkoutContextType | undefined>(undefined);
+
+export const SaveWorkout = async (plan: WorkoutPlan) => {
+  try {
+    // Get existing workouts
+    const savedWorkoutsString = await AsyncStorage.getItem("SavedWorkouts");
+    let savedWorkouts: WorkoutPlan[] = [];
+
+    if (savedWorkoutsString) {
+      // Parse existing workouts if any
+      savedWorkouts = JSON.parse(savedWorkoutsString);
+      // Ensure it's an array
+      if (!Array.isArray(savedWorkouts)) {
+        savedWorkouts = [savedWorkouts];
+      }
+    }
+
+    // Add new workout to array
+    savedWorkouts.push(plan);
+
+    // Save updated array back to storage
+    await AsyncStorage.setItem("SavedWorkouts", JSON.stringify(savedWorkouts));
+    console.log("Workout saved successfully");
+  } catch (error) {
+    console.error("Error saving workout:", error);
+    throw error;
+  }
+};
 
 export const WorkoutProvider = ({ children }: { children: ReactNode }) => {
   const [workoutData, setWorkoutData] = useState<WorkoutData>({

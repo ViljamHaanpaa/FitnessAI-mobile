@@ -8,17 +8,6 @@ export const WorkoutPlanDisplay = ({ plan }: { plan: WorkoutPlan | null }) => {
 
   return (
     <View style={styles.container}>
-      <View style={styles.Headersection}>
-        <Text style={styles.title}>{plan.title}</Text>
-        <TouchableOpacity
-          onPress={() => {
-            SaveWorkout(plan);
-          }}
-          style={styles.saveButton}
-        >
-          <Icon name="plus-circle" size={30} color="#FFA500" />
-        </TouchableOpacity>
-      </View>
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>Warmup ({plan.warmup.duration})</Text>
         {plan.warmup.exercises.map((exercise, index) => (
@@ -72,13 +61,7 @@ const styles = StyleSheet.create({
   container: {
     gap: 30,
   },
-  title: {
-    fontSize: 20,
-    fontWeight: "400",
-    marginBottom: 16,
-    color: "#FFFFFF",
-    alignSelf: "center",
-  },
+
   Headersection: {
     flexDirection: "row",
     justifyContent: "space-between",
@@ -86,6 +69,7 @@ const styles = StyleSheet.create({
   },
   section: {
     gap: 15,
+    marginTop: 30,
   },
   sectionTitle: {
     color: "#FFA500",
@@ -96,7 +80,6 @@ const styles = StyleSheet.create({
   exercise: {
     padding: 12,
     backgroundColor: "#3b3b3b",
-
     gap: 4,
     borderRadius: 20,
     borderCurve: "continuous",

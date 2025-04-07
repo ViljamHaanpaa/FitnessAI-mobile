@@ -16,6 +16,7 @@ The JSON should match the exact structure below:
   "duration": "{duration}",
   "gender": "{gender}",
   "equipment": "{equipment}",
+  "timestamp": "", 
   "warmup": {
     "duration": "{warmupTime}",
     "exercises": [
@@ -104,6 +105,7 @@ export const formatWorkoutResponse = (response: string) => {
     duration: parsedJson.duration || "60",
     gender: parsedJson.gender || "unknown",
     equipment: parsedJson.equipment || "none",
+    timestamp: new Date().toISOString(),
     warmup: {
       duration: parsedJson.warmup?.duration || "10",
       exercises: (parsedJson.warmup?.exercises || []).map((ex: any) => ({
