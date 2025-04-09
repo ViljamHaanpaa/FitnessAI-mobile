@@ -1,6 +1,6 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useCallback } from "react";
 import { StyleSheet, View, Text, FlatList } from "react-native";
-import { WorkoutPlan, WorkoutData } from "@/types/workout";
+import { WorkoutPlan } from "@/types/workout";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useFocusEffect } from "@react-navigation/native";
 import { CollapsibleWorkout } from "@/components/CollapsibleWorkout";
@@ -60,7 +60,7 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
-    backgroundColor: "#000000",
+    backgroundColor: "#1A1C20",
     marginBottom: 50,
   },
   listContainer: {

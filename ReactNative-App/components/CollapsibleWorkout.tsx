@@ -39,7 +39,6 @@ export const CollapsibleWorkout = ({ workout }: CollapsibleWorkoutProps) => {
       >
         <View style={styles.header}>
           <Text style={styles.title}>{workout.title}</Text>
-
           <Icon
             name={isExpanded ? "chevron-up" : "chevron-down"}
             size={20}
@@ -55,7 +54,7 @@ export const CollapsibleWorkout = ({ workout }: CollapsibleWorkoutProps) => {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: "#1E1E1E",
+    backgroundColor: "#101213",
     padding: 16,
     borderRadius: 12,
     marginBottom: 16,
