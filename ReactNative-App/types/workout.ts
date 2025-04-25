@@ -4,14 +4,29 @@ export interface WorkoutData {
   level: string;
   duration: string;
   equipment: string;
+  focus: string;
 }
+export type WorkoutGoal =
+  | "Endurance"
+  | "Muscle Gain"
+  | "Weight Loss"
+  | "Strength"
+  | "Mobility";
+
+export const WORKOUT_GOALS: WorkoutGoal[] = [
+  "Endurance",
+  "Muscle Gain",
+  "Weight Loss",
+  "Strength",
+  "Mobility",
+];
 
 export interface Exercise {
   name: string;
-  sets?: number;
-  reps?: string;
-  rest?: string;
-  duration?: string;
+  sets: number;
+  reps: string;
+  rest: string;
+  duration: string;
   description: string;
 }
 

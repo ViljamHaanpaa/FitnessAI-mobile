@@ -43,6 +43,7 @@ export const WorkoutProvider = ({ children }: { children: ReactNode }) => {
     level: "",
     duration: "",
     equipment: "",
+    focus: "",
   });
 
   const updateWorkoutData = (newData: Partial<WorkoutData>) => {

@@ -18,28 +18,37 @@ export default function TabLayout() {
         tabBarBackground: TabBarBackground,
         tabBarStyle: Platform.select({
           ios: {
-            // Use a transparent background on iOS to show the blur effect
             position: "absolute",
+            height: 80,
           },
           default: {},
         }),
       }}
     >
       <Tabs.Screen
-        name="index"
+        name="Profile"
         options={{
-          title: "Home",
+          title: "",
           tabBarIcon: ({ color }) => (
-            <IconSymbol size={28} name="house.fill" color={color} />
+            <IconSymbol
+              size={35}
+              name="person.fill"
+              color={color}
+              style={{ marginTop: 10 }}
+            />
           ),
         }}
       />
       <Tabs.Screen
-        name="Profile"
+        name="index"
         options={{
-          title: "Profile",
-          tabBarIcon: ({ color }) => (
-            <IconSymbol size={28} name="person.fill" color={color} />
+          title: "",
+          tabBarIcon: ({ color, focused }) => (
+            <IconSymbol
+              size={65}
+              name="plus.circle.fill"
+              color={focused ? "#FFA500" : color}
+            />
           ),
         }}
       />
@@ -47,9 +56,14 @@ export default function TabLayout() {
       <Tabs.Screen
         name="SavedWorkouts"
         options={{
-          title: "Saved",
-          tabBarIcon: ({ color }) => (
-            <IconSymbol size={28} name="bookmark.fill" color={color} />
+          title: "",
+          tabBarIcon: ({ color, style }) => (
+            <IconSymbol
+              size={35}
+              name="bookmark.fill"
+              color={color}
+              style={{ marginTop: 10 }}
+            />
           ),
         }}
       />

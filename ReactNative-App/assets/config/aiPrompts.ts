@@ -1,17 +1,4 @@
-export const WORKOUT_PROMPT = `Return only a JSON object with NO additional text, NO markdown, NO explanations.
-
-Strict JSON Formatting Rules:
-- Use ONLY double quotes for all keys and string values.
-- Do NOT include trailing commas.
-- Ensure all numeric values (e.g., sets) are valid numbers.
-- Ensure all string values (e.g., durations) follow the format ("30s", "2min").
--"You MUST use only double quotes (\") for all JSON properties and values. Do NOT use single quotes (')."
--"You MUST enclose all string values in double quotes (\"). Do NOT return any unquoted strings."
-
-
-The JSON should match the exact structure below:
-
-{
+export const WORKOUT_PROMPT = `{
   "title": "{goal} Workout - {level} Level",
   "duration": "{duration}",
   "gender": "{gender}",

@@ -1,4 +1,12 @@
-import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  ScrollView,
+  Image,
+  SafeAreaView,
+} from "react-native";
 import { SaveWorkout } from "@/contexts/WorkoutContext";
 import Icon from "@expo/vector-icons/FontAwesome";
 import { WorkoutPlan } from "@/types/workout";
@@ -7,73 +15,89 @@ export const WorkoutPlanDisplay = ({ plan }: { plan: WorkoutPlan | null }) => {
   if (!plan) return null;
 
   return (
-    <View style={styles.container}>
-      <View style={styles.Headersection}>
-        <Text style={styles.title}>{plan.title}</Text>
-        <TouchableOpacity
-          onPress={() => {
-            SaveWorkout(plan);
-          }}
-          style={styles.saveButton}
-        >
-          <Icon name="plus-circle" size={30} color="#FFA500" />
-        </TouchableOpacity>
-      </View>
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Warmup ({plan.warmup.duration})</Text>
-        {plan.warmup.exercises.map((exercise, index) => (
-          <View key={index} style={styles.exercise}>
-            <Text style={styles.exerciseName}>{exercise.name}</Text>
-            <Text style={styles.exerciseDuration}>{exercise.duration}</Text>
-            <Text style={styles.exerciseDescription}>
-              {exercise.description}
-            </Text>
-          </View>
-        ))}
-      </View>
+    <>
+      <Image
+        source={require("../assets/images/background2.png")}
+        style={styles.backgroundImage}
+      />
+      <ScrollView style={styles.container}>
+        <View style={styles.Headersection}>
+          <Text style={styles.title}>{plan.title}</Text>
+          <TouchableOpacity
+            onPress={() => {
+              SaveWorkout(plan);
+            }}
+            style={styles.saveButton}
+          >
+            <Icon name="plus-circle" size={30} color="#FFA500" />
+          </TouchableOpacity>
+        </View>
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>
+            Warmup ({plan.warmup.duration})
+          </Text>
+          {plan.warmup.exercises.map((exercise, index) => (
+            <View key={index} style={styles.exercise}>
+              <Text style={styles.exerciseName}>{exercise.name}</Text>
+              <Text style={styles.exerciseDuration}>{exercise.duration}</Text>
+              <Text style={styles.exerciseDescription}>
+                {exercise.description}
+              </Text>
+            </View>
+          ))}
+        </View>
 
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>
-          Main Workout ({plan.mainWorkout.duration})
-        </Text>
-        {plan.mainWorkout.exercises.map((exercise, index) => (
-          <View key={index} style={styles.exercise}>
-            <Text style={styles.exerciseName}>{exercise.name}</Text>
-            <Text style={styles.exerciseDuration}>
-              Sets: {exercise.sets} | Reps: {exercise.reps} | Rest:{" "}
-              {exercise.rest}
-            </Text>
-            <Text style={styles.exerciseDescription}>
-              {exercise.description}
-            </Text>
-          </View>
-        ))}
-      </View>
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>
+            Main Workout ({plan.mainWorkout.duration})
+          </Text>
+          {plan.mainWorkout.exercises.map((exercise, index) => (
+            <View key={index} style={styles.exercise}>
+              <Text style={styles.exerciseName}>{exercise.name}</Text>
+              <Text style={styles.exerciseDuration}>
+                Sets: {exercise.sets} | Reps: {exercise.reps} | Rest:{" "}
+                {exercise.rest}
+              </Text>
+              <Text style={styles.exerciseDescription}>
+                {exercise.description}
+              </Text>
+            </View>
+          ))}
+        </View>
 
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>
-          Cooldown ({plan.cooldown.duration}) min
-        </Text>
-        {plan.cooldown.stretches.map((stretch, index) => (
-          <View key={index} style={styles.exercise}>
-            <Text style={styles.exerciseName}>{stretch.name}</Text>
-            <Text style={styles.exerciseDuration}>{stretch.duration}</Text>
-            <Text style={styles.exerciseDescription}>
-              {stretch.description}
-            </Text>
-          </View>
-        ))}
-      </View>
-    </View>
+        <View style={styles.lastSection}>
+          <Text style={styles.sectionTitle}>
+            Cooldown ({plan.cooldown.duration}) min
+          </Text>
+          {plan.cooldown.stretches.map((stretch, index) => (
+            <View key={index} style={styles.exercise}>
+              <Text style={styles.exerciseName}>{stretch.name}</Text>
+              <Text style={styles.exerciseDuration}>{stretch.duration}</Text>
+              <Text style={styles.exerciseDescription}>
+                {stretch.description}
+              </Text>
+            </View>
+          ))}
+        </View>
+      </ScrollView>
+    </>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
+    padding: 20,
     gap: 30,
   },
+  backgroundImage: {
+    width: "110%",
+    height: "110%",
+    position: "absolute",
+    resizeMode: "cover",
+  },
   title: {
-    fontSize: 20,
+    fontSize: 25,
+    width: 300,
     fontWeight: "400",
     marginBottom: 16,
     color: "#FFFFFF",
@@ -83,19 +107,25 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
+    width: 350,
   },
   section: {
     gap: 15,
+  },
+  lastSection: {
+    gap: 15,
+    marginBottom: 60,
   },
   sectionTitle: {
     color: "#FFA500",
     fontSize: 22,
     fontWeight: "800",
     marginBottom: 8,
+    marginTop: 16,
   },
   exercise: {
     padding: 12,
-    backgroundColor: "#3b3b3b",
+    backgroundColor: "#1E2022",
 
     gap: 4,
     borderRadius: 20,
@@ -116,8 +146,5 @@ const styles = StyleSheet.create({
     fontWeight: "600",
     color: "#FFFFFF",
   },
-  saveButton: {
-    bottom: 20,
-    left: 10,
-  },
+  saveButton: {},
 });
