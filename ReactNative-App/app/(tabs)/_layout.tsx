@@ -7,7 +7,9 @@ import TabBarBackground from "@/components/ui/TabBarBackground";
 import { Colors } from "@/constants/Colors";
 import { useColorScheme } from "@/hooks/useColorScheme";
 
+import { useWorkout } from "../../contexts/WorkoutContext";
 export default function TabLayout() {
+  const { workoutData } = useWorkout();
   const colorScheme = useColorScheme();
   return (
     <Tabs
@@ -43,13 +45,20 @@ export default function TabLayout() {
         name="index"
         options={{
           title: "",
-          tabBarIcon: ({ color, focused }) => (
-            <IconSymbol
-              size={65}
-              name="plus.circle.fill"
-              color={focused ? "#FFA500" : color}
-            />
-          ),
+          tabBarIcon: ({ color, focused }) =>
+            !workoutData.workoutGenerated ? (
+              <IconSymbol
+                size={65}
+                name="plus.circle.fill"
+                color={focused ? "#FFA500" : color}
+              />
+            ) : (
+              <IconSymbol
+                size={65}
+                name="checkmark.circle.fill"
+                color={focused ? "#00FF66" : "#006633"}
+              />
+            ),
         }}
       />
 
@@ -57,7 +66,7 @@ export default function TabLayout() {
         name="SavedWorkouts"
         options={{
           title: "",
-          tabBarIcon: ({ color, style }) => (
+          tabBarIcon: ({ color }) => (
             <IconSymbol
               size={35}
               name="bookmark.fill"

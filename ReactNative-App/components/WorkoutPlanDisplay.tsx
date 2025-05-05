@@ -5,82 +5,132 @@ import {
   TouchableOpacity,
   ScrollView,
   Image,
-  SafeAreaView,
+  Alert,
 } from "react-native";
-import { SaveWorkout } from "@/contexts/WorkoutContext";
-import Icon from "@expo/vector-icons/FontAwesome";
-import { WorkoutPlan } from "@/types/workout";
 
-export const WorkoutPlanDisplay = ({ plan }: { plan: WorkoutPlan | null }) => {
+import Icon from "@expo/vector-icons/FontAwesome";
+
+import { WorkoutPlan, WorkoutGoalSport } from "@/types/workout";
+import { useWorkout, SaveWorkout } from "@/contexts/WorkoutContext";
+import { WORKOUT_FOCUS_OPTIONS_SPORTS } from "../assets/data/workouts/focusOptions";
+interface WorkoutPlanDisplayProps {
+  plan: WorkoutPlan | null;
+  setShowWorkoutPlan: (show: boolean) => void;
+}
+export const WorkoutPlanDisplay = ({
+  plan,
+  setShowWorkoutPlan,
+}: WorkoutPlanDisplayProps) => {
+  const { updateWorkoutData, workoutData } = useWorkout();
+  console.log("Workout Data:", workoutData);
+
+  const getFocusImage = () => {
+    if (!workoutData.goal || !workoutData.focus) return null;
+
+    const focusOptions =
+      WORKOUT_FOCUS_OPTIONS_SPORTS[workoutData.goal as WorkoutGoalSport] || [];
+    const selectedFocus = focusOptions.find(
+      (option) => option.title === workoutData.focus
+    );
+    return selectedFocus?.image;
+  };
+  const focusImage = getFocusImage();
   if (!plan) return null;
 
+  const handleBackPress = () => {
+    Alert.alert(
+      "Discard Workout",
+      "Are you sure you want to discard this workout?",
+      [
+        {
+          text: "Cancel",
+          style: "cancel",
+        },
+        {
+          text: "Discard",
+          style: "destructive",
+          onPress: () => {
+            setShowWorkoutPlan(false);
+            updateWorkoutData({
+              workoutGenerated: false,
+              focus: "",
+              duration: "",
+              equipment: "",
+            });
+          },
+        },
+      ],
+      { cancelable: true }
+    );
+  };
+
   return (
-    <>
-      <Image
-        source={require("../assets/images/background2.png")}
-        style={styles.backgroundImage}
-      />
-      <ScrollView style={styles.container}>
-        <View style={styles.Headersection}>
-          <Text style={styles.title}>{plan.title}</Text>
+    <ScrollView style={styles.container}>
+      <View>
+        <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
+          <TouchableOpacity onPress={handleBackPress} style={styles.saveButton}>
+            <Icon name="chevron-circle-left" size={35} color="#DC143C" />
+          </TouchableOpacity>
           <TouchableOpacity
             onPress={() => {
               SaveWorkout(plan);
             }}
             style={styles.saveButton}
           >
-            <Icon name="plus-circle" size={30} color="#FFA500" />
+            <Icon name="plus-circle" size={35} color="#00FF66" />
           </TouchableOpacity>
         </View>
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>
-            Warmup ({plan.warmup.duration})
-          </Text>
-          {plan.warmup.exercises.map((exercise, index) => (
-            <View key={index} style={styles.exercise}>
-              <Text style={styles.exerciseName}>{exercise.name}</Text>
-              <Text style={styles.exerciseDuration}>{exercise.duration}</Text>
-              <Text style={styles.exerciseDescription}>
-                {exercise.description}
-              </Text>
-            </View>
-          ))}
-        </View>
+        {focusImage && <Image source={focusImage} style={styles.focusImage} />}
+      </View>
+      <View style={styles.Headersection}>
+        <Text style={styles.title}>{plan.title}</Text>
+      </View>
+      <View style={styles.section}>
+        <Text style={styles.sectionTitle}>Warmup ({plan.warmup.duration})</Text>
+        {plan.warmup.exercises.map((exercise, index) => (
+          <View key={index} style={styles.exercise}>
+            <Text style={styles.exerciseName}>{exercise.name}</Text>
+            <Text style={styles.exerciseDuration}>{exercise.duration}</Text>
+            <Text style={styles.exerciseDescription}>
+              {exercise.description}
+            </Text>
+          </View>
+        ))}
+      </View>
 
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>
-            Main Workout ({plan.mainWorkout.duration})
-          </Text>
-          {plan.mainWorkout.exercises.map((exercise, index) => (
-            <View key={index} style={styles.exercise}>
-              <Text style={styles.exerciseName}>{exercise.name}</Text>
-              <Text style={styles.exerciseDuration}>
-                Sets: {exercise.sets} | Reps: {exercise.reps} | Rest:{" "}
-                {exercise.rest}
-              </Text>
-              <Text style={styles.exerciseDescription}>
-                {exercise.description}
-              </Text>
-            </View>
-          ))}
-        </View>
+      <View style={styles.section}>
+        <Text style={styles.sectionTitle}>
+          Main Workout ({plan.mainWorkout.duration})
+        </Text>
+        {plan.mainWorkout.exercises.map((exercise, index) => (
+          <View key={index} style={styles.exercise}>
+            <Text style={styles.exerciseName}>{exercise.name}</Text>
+            <Text style={styles.exerciseDuration}>
+              Sets: {exercise.sets} | Reps: {exercise.reps} | Rest:{" "}
+              {exercise.rest}
+            </Text>
+            <Text style={styles.exerciseDescription}>
+              {exercise.description}
+            </Text>
+          </View>
+        ))}
+      </View>
 
-        <View style={styles.lastSection}>
-          <Text style={styles.sectionTitle}>
-            Cooldown ({plan.cooldown.duration}) min
-          </Text>
-          {plan.cooldown.stretches.map((stretch, index) => (
-            <View key={index} style={styles.exercise}>
-              <Text style={styles.exerciseName}>{stretch.name}</Text>
-              <Text style={styles.exerciseDuration}>{stretch.duration}</Text>
-              <Text style={styles.exerciseDescription}>
-                {stretch.description}
-              </Text>
-            </View>
-          ))}
-        </View>
-      </ScrollView>
-    </>
+      <View style={styles.lastSection}>
+        <Text style={styles.sectionTitle}>
+          Cooldown ({plan.cooldown.duration}) min
+        </Text>
+        {plan.cooldown.stretches.map((stretch, index) => (
+          <View key={index} style={styles.exercise}>
+            <Text style={styles.exerciseName}>{stretch.name}</Text>
+            <Text style={styles.exerciseDuration}>{stretch.duration}</Text>
+            <Text style={styles.exerciseDescription}>
+              {stretch.description}
+            </Text>
+          </View>
+        ))}
+      </View>
+    </ScrollView>
   );
 };
 
@@ -102,12 +152,17 @@ const styles = StyleSheet.create({
     marginBottom: 16,
     color: "#FFFFFF",
     alignSelf: "center",
+    textAlign: "center",
+  },
+  focusImage: {
+    width: 200,
+    height: 200,
+    borderRadius: 50,
+    marginBottom: 10,
+    alignSelf: "center",
   },
   Headersection: {
-    flexDirection: "row",
-    justifyContent: "space-between",
     alignItems: "center",
-    width: 350,
   },
   section: {
     gap: 15,

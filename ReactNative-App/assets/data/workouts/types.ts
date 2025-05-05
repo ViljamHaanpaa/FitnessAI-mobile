@@ -10,3 +10,14 @@ export type WorkoutGoal =
   | "Strength"
   | "Endurance"
   | "Mobility";
+
+export type WorkoutGoalSport =
+  | "Golf"
+  | "Running"
+  | "Swimming"
+  | "Football"
+  | "Basketball"
+  | "Baseball"
+  | "Ice Hockey"
+  | "Volleyball"
+  | "Cycling";

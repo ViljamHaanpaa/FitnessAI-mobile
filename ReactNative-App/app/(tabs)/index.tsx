@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef, JSX } from "react";
 import {
   Image,
   StyleSheet,
@@ -7,27 +7,82 @@ import {
   View,
   ActivityIndicator,
   SafeAreaView,
+  FlatList,
 } from "react-native";
 import Icon from "@expo/vector-icons/FontAwesome";
 import { WorkoutPlanDisplay } from "@/components/WorkoutPlanDisplay";
 import { useWorkout } from "../../contexts/WorkoutContext";
 import { generateWorkoutPlan } from "../../assets/services/ai/deepseek";
-import { WORKOUT_FOCUS_OPTIONS } from "../../assets/data/workouts/focusOptions";
-import { WorkoutData, WorkoutGoal } from "@/types/workout";
+import {
+  WORKOUT_FOCUS_OPTIONS,
+  WORKOUT_FOCUS_OPTIONS_SPORTS,
+} from "../../assets/data/workouts/focusOptions";
+import {
+  WorkoutGoal,
+  WORKOUT_GOALS_SPORTS,
+  WorkoutGoalSport,
+} from "@/types/workout";
+import Slider from "@react-native-community/slider";
+import Animated, {
+  FadeIn,
+  FadeOut,
+  SlideInDown,
+  SlideOutUp,
+  withSpring,
+  useAnimatedStyle,
+  withTiming,
+  useSharedValue,
+} from "react-native-reanimated";
 export default function HomeScreen() {
+  const [duration, setDuration] = useState(60);
+  const [selectedEquipment, setSelectedEquipment] = useState("No Equipment");
   const { updateWorkoutData, workoutData } = useWorkout();
-
+  const [currentIndex, setCurrentIndex] = useState(0);
   const [plan, setPlan] = useState<any | null>(null);
   const [loading, setLoading] = useState(false);
   const [showErrorMessage, setShowErrorMessage] = useState(false);
   const [showWorkoutPlan, setShowWorkoutPlan] = useState(false);
+  const flatListRef = useRef<FlatList<QuestionItem>>(null);
+  interface QuestionItem {
+    id: string;
+    component: JSX.Element;
+  }
+  const equipment = [
+    "No Equipment",
+    "Home Gym Equipment",
+    "Basic Gym Equipment ",
+  ];
+
+  const nextScreen = () => {
+    if (currentIndex < questions.length - 1) {
+      flatListRef.current?.scrollToIndex({
+        index: currentIndex + 1,
+        animated: true,
+      });
+      setCurrentIndex(currentIndex + 1);
+    } else {
+      // Save all data before navigation
+      generatePlan();
+    }
+  };
+  const handleDurationChange = (value: number) => {
+    setDuration(value);
+    updateWorkoutData({ duration: value.toString() });
+  };
+  const handleEquipmentButtonPress = (equipment: string) => {
+    setSelectedEquipment(equipment);
+    updateWorkoutData({ equipment });
+  };
   const getCurrentFocusOptions = () => {
     if (!workoutData.goal) return [];
-    console.log(
-      "Current focus options:",
-      workoutData.goal,
-      WORKOUT_FOCUS_OPTIONS[workoutData.goal as WorkoutGoal] || []
-    );
+
+    // Check if it's a sport goal
+    if (WORKOUT_GOALS_SPORTS.includes(workoutData.goal as WorkoutGoalSport)) {
+      return (
+        WORKOUT_FOCUS_OPTIONS_SPORTS[workoutData.goal as WorkoutGoalSport] || []
+      );
+    }
+    // Return regular fitness focus options
     return WORKOUT_FOCUS_OPTIONS[workoutData.goal as WorkoutGoal] || [];
   };
   let MAX_RETRIES = 3;
@@ -46,6 +101,9 @@ export default function HomeScreen() {
           if (generatedPlan) {
             console.log("Generated plan:", generatedPlan);
             setPlan(generatedPlan);
+            updateWorkoutData({
+              workoutGenerated: true,
+            });
             return;
           }
         } catch (error) {
@@ -66,60 +124,171 @@ export default function HomeScreen() {
       setLoading(false);
     }
   };
-
-  return (
-    <SafeAreaView style={{ flex: 1 }}>
-      {!showWorkoutPlan ? (
-        <>
-          <Image
-            source={require("../../assets/images/background2.png")}
-            style={styles.backgroundImage}
-          />
+  const renderItem = ({ item }: { item: QuestionItem }) => item.component;
+  const questions: QuestionItem[] = [
+    ...(workoutData.goal && !getCurrentFocusOptions().length
+      ? []
+      : [
+          {
+            id: "1",
+            component: (
+              <View>
+                <View style={styles.titleContainer}>
+                  <Text style={styles.title}>
+                    Ready to improve your{" "}
+                    <Text style={{ color: "#FFA31A" }}>{workoutData.goal}</Text>{" "}
+                    today?
+                  </Text>
+                  <Text style={styles.titleDescription}>
+                    What are we working on today?
+                  </Text>
+                </View>
+                <View style={styles.optionsContainer}>
+                  {getCurrentFocusOptions().map((option) => (
+                    <TouchableOpacity
+                      key={option.id}
+                      style={[
+                        styles.optionButton,
+                        workoutData.focus === option.title &&
+                          styles.selectedButton,
+                      ]}
+                      onPress={() => updateWorkoutData({ focus: option.title })}
+                    >
+                      <View
+                        style={{
+                          height: 40,
+                          justifyContent: "center",
+                          alignItems: "center",
+                        }}
+                      >
+                        <Text
+                          style={[
+                            styles.optionText,
+                            workoutData.focus === option.title &&
+                              styles.selectedText,
+                          ]}
+                        >
+                          {option.title}
+                        </Text>
+                      </View>
+                      {option.image && (
+                        <Image
+                          source={option.image}
+                          style={[styles.focusImage, { marginTop: 5 }]}
+                        />
+                      )}
+                    </TouchableOpacity>
+                  ))}
+                </View>
+              </View>
+            ),
+          },
+        ]),
+    {
+      id: "2",
+      component: (
+        <View style={{ alignContent: "center" }}>
           <View style={styles.titleContainer}>
             <Text style={styles.title}>
-              What would you like to{" "}
-              <Text style={{ color: "#FFA31A" }}>focus on</Text> today?
-            </Text>
-            <Text style={styles.titleDescription}>
-              Tell us what you're training today and we'll generate{" "}
-              <Text style={{ color: "#FFA31A" }}>a perfect workout.</Text>
+              What
+              <Text style={{ color: "#FFA31A" }}> equipment</Text> You have
+              access to?
             </Text>
           </View>
-          <View style={styles.optionsContainer}>
-            {getCurrentFocusOptions().map((option) => (
+
+          <View style={styles.equipmentContainer}>
+            {equipment.map((equipment) => (
               <TouchableOpacity
-                key={option.id}
+                key={equipment}
                 style={[
-                  styles.optionButton,
-                  workoutData.focus === option.title && styles.selectedButton,
+                  styles.equipmentButton,
+                  {
+                    backgroundColor:
+                      selectedEquipment === equipment ? "#FFA31A" : "#1E2022",
+                  },
                 ]}
-                onPress={() => updateWorkoutData({ focus: option.title })}
+                onPress={() => handleEquipmentButtonPress(equipment)} // Fix is here
               >
-                <Text
-                  style={[
-                    styles.optionText,
-                    workoutData.focus === option.title && styles.selectedText,
-                  ]}
-                >
-                  {option.title}
-                </Text>
-                {option.image && (
-                  <Image
-                    source={option.image}
-                    style={[styles.focusImage, { marginTop: 5 }]}
-                  />
-                )}
+                <Text style={styles.equipmentButtonText}>{equipment}</Text>
               </TouchableOpacity>
             ))}
           </View>
+        </View>
+      ),
+    },
+    {
+      id: "3",
+      component: (
+        <View style={{ alignContent: "center" }}>
+          <View style={styles.titleContainer}>
+            <Text style={styles.title}>
+              Pick your training <Text style={{ color: "#FFA31A" }}>time</Text>{" "}
+              for today.
+            </Text>
+          </View>
+          <View
+            style={{
+              alignItems: "center",
+              width: 400,
+              marginTop: 190,
+              alignSelf: "center",
+            }}
+          >
+            <Text style={styles.questionTitle}>
+              Slide to choose how long you want to train.
+            </Text>
+            <View style={styles.sliderValues}>
+              <Text style={styles.sliderValuesText}>15 min</Text>
+              <Text style={styles.currentValue}>
+                {Math.round(duration)} min
+              </Text>
+              <Text style={styles.sliderValuesText}>+90 min</Text>
+            </View>
+            <Slider
+              style={{ width: 330, height: 40 }}
+              minimumValue={15}
+              maximumValue={105}
+              minimumTrackTintColor="#FFA31A"
+              value={duration}
+              onValueChange={handleDurationChange}
+              tapToSeek={true}
+            />
+          </View>
+        </View>
+      ),
+    },
+  ];
+
+  return (
+    <SafeAreaView style={{ flex: 1 }}>
+      <Image
+        source={require("../../assets/images/background2.png")}
+        style={styles.backgroundImage}
+      />
+      {!showWorkoutPlan ? (
+        <>
+          <Animated.FlatList<QuestionItem>
+            ref={flatListRef}
+            data={questions}
+            renderItem={renderItem}
+            horizontal
+            pagingEnabled
+            showsHorizontalScrollIndicator={false}
+            scrollEnabled={false}
+            keyExtractor={(item) => item.id}
+            style={{ flex: 1, width: "100%" }}
+            contentContainerStyle={styles.flatListContainer}
+          />
           <TouchableOpacity
             onPress={() => {
-              generatePlan();
+              nextScreen();
             }}
             style={styles.generateButton}
           >
             <View style={styles.buttonContent}>
-              <Text style={styles.buttontitle}> Generate Your Workout!</Text>
+              <Text style={styles.buttontitle}>
+                {currentIndex === questions.length - 1 ? "Finish" : "Next"}
+              </Text>
               <Icon name="chevron-right" size={20} color="#FFFFFF" />
             </View>
           </TouchableOpacity>
@@ -127,16 +296,15 @@ export default function HomeScreen() {
       ) : (
         <>
           {loading ? (
-            <View>
-              <ActivityIndicator
-                size="small"
-                color="#FFA500"
-                style={{ marginTop: 100 }}
-              />
+            <View style={{ top: 300, alignItems: "center" }}>
+              <ActivityIndicator size="small" color="#FFA500" style={{}} />
               <Text style={styles.loadingText}>Generating workout plan...</Text>
             </View>
           ) : (
-            <WorkoutPlanDisplay plan={plan} />
+            <WorkoutPlanDisplay
+              plan={plan}
+              setShowWorkoutPlan={setShowWorkoutPlan}
+            />
           )}
         </>
       )}
@@ -155,6 +323,9 @@ const styles = StyleSheet.create({
   titleContainer: {
     alignSelf: "center",
   },
+  flatListContainer: {
+    justifyContent: "center",
+  },
   optionsContainer: {
     flexDirection: "row",
     flexWrap: "wrap",
@@ -162,6 +333,41 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     gap: 10,
     marginTop: 20,
+    width: 400,
+    alignSelf: "center",
+    alignItems: "center",
+  },
+  equipmentContainer: {
+    width: 400,
+    gap: 10,
+    alignContent: "center",
+    alignItems: "center",
+    justifyContent: "center",
+    top: 100,
+  },
+  questionTitle: {
+    fontSize: 20,
+    alignSelf: "center",
+    textAlign: "left",
+    color: "#FFFFFF",
+    marginBottom: 20,
+    width: 330,
+    fontWeight: 300,
+    lineHeight: 25,
+  },
+  sliderValues: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    width: 320,
+  },
+  sliderValuesText: {
+    fontSize: 16,
+    color: "#5D5F60",
+  },
+  currentValue: {
+    fontSize: 20,
+    color: "#FFA31A",
+    fontWeight: "600",
   },
   buttonContent: {
     flexDirection: "row",
@@ -170,9 +376,9 @@ const styles = StyleSheet.create({
   },
   optionButton: {
     backgroundColor: "#1E2022",
-    padding: 15,
+    padding: 16,
     borderRadius: 10,
-    width: "30%",
+    width: "31%",
     alignItems: "center",
     justifyContent: "center",
   },
@@ -182,6 +388,7 @@ const styles = StyleSheet.create({
   optionText: {
     color: "#FFFFFF",
     fontSize: 16,
+    width: 100,
     fontWeight: "500",
     textAlign: "center",
   },
@@ -203,6 +410,18 @@ const styles = StyleSheet.create({
     height: "110%",
     position: "absolute",
     resizeMode: "cover",
+  },
+  equipmentButton: {
+    width: 300,
+    borderRadius: 10,
+    padding: 30,
+    justifyContent: "center",
+  },
+  equipmentButtonText: {
+    color: "#FFFFFF",
+    fontSize: 16,
+    fontWeight: "500",
+    textAlign: "center",
   },
   buttontitle: {
     color: "#FFFFFF",

@@ -5,6 +5,7 @@ export interface WorkoutData {
   duration: string;
   equipment: string;
   focus: string;
+  workoutGenerated: boolean;
 }
 export type WorkoutGoal =
   | "Endurance"
@@ -13,12 +14,35 @@ export type WorkoutGoal =
   | "Strength"
   | "Mobility";
 
+export type WorkoutGoalSport =
+  | "Golf"
+  | "Running"
+  | "Swimming"
+  | "Football"
+  | "Basketball"
+  | "Baseball"
+  | "Ice Hockey"
+  | "Volleyball"
+  | "Cycling";
+
 export const WORKOUT_GOALS: WorkoutGoal[] = [
   "Endurance",
   "Muscle Gain",
   "Weight Loss",
   "Strength",
   "Mobility",
+];
+
+export const WORKOUT_GOALS_SPORTS: WorkoutGoalSport[] = [
+  "Golf",
+  "Running",
+  "Swimming",
+  "Football",
+  "Basketball",
+  "Baseball",
+  "Ice Hockey",
+  "Volleyball",
+  "Cycling",
 ];
 
 export interface Exercise {

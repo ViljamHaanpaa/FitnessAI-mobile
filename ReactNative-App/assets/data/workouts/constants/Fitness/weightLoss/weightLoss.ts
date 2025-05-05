@@ -1,4 +1,4 @@
-import { FocusOption } from "../types";
+import { FocusOption } from "../../../types";
 
 export const weightLossOptions: FocusOption[] = [
   {
