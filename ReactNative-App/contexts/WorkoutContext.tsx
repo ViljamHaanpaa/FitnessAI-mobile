@@ -1,4 +1,10 @@
-import { createContext, useContext, useState, ReactNode } from "react";
+import {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  ReactNode,
+} from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { WorkoutPlan, WorkoutData } from "@/types/workout";
 
@@ -46,9 +52,33 @@ export const WorkoutProvider = ({ children }: { children: ReactNode }) => {
     focus: "",
     workoutGenerated: false,
   });
+  console.log("Workout Data:", workoutData);
 
-  const updateWorkoutData = (newData: Partial<WorkoutData>) => {
-    setWorkoutData((prev) => ({ ...prev, ...newData }));
+  // Load saved workout data on mount
+  useEffect(() => {
+    const loadWorkoutData = async () => {
+      try {
+        const savedData = await AsyncStorage.getItem("workoutData");
+        if (savedData) {
+          setWorkoutData(JSON.parse(savedData));
+        }
+      } catch (error) {
+        console.error("Error loading workout data:", error);
+      }
+    };
+
+    loadWorkoutData();
+  }, []);
+
+  // Update workout data and save to AsyncStorage
+  const updateWorkoutData = async (newData: Partial<WorkoutData>) => {
+    try {
+      const updatedData = { ...workoutData, ...newData };
+      setWorkoutData(updatedData);
+      await AsyncStorage.setItem("workoutData", JSON.stringify(updatedData));
+    } catch (error) {
+      console.error("Error saving workout data:", error);
+    }
   };
 
   return (

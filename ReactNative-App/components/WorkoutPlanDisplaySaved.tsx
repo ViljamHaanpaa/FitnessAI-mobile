@@ -41,7 +41,7 @@ export const WorkoutPlanDisplay = ({ plan }: { plan: WorkoutPlan | null }) => {
 
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>
-          Cooldown ({plan.cooldown.duration}) min
+          Cooldown ({plan.cooldown.duration})
         </Text>
         {plan.cooldown.stretches.map((stretch, index) => (
           <View key={index} style={styles.exercise}>

@@ -1,171 +1,214 @@
-import React from "react";
-import { StyleSheet, View, Text, Image } from "react-native";
+import { useState } from "react";
+import {
+  StyleSheet,
+  View,
+  Text,
+  Image,
+  SafeAreaView,
+  Dimensions,
+  TouchableOpacity,
+} from "react-native";
+import { WorkoutGoalSport } from "@/types/workout";
 import { useWorkout } from "@/contexts/WorkoutContext";
-
+import { WORKOUT_FOCUS_OPTIONS_SPORTS } from "../../assets/data/workouts/focusOptions";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { useRouter } from "expo-router";
 export default function Profile() {
   const { workoutData } = useWorkout();
+  const screenWidth = Dimensions.get("window").width;
+  const [showGoalPicker, setShowGoalPicker] = useState(false);
+  const router = useRouter();
+  const getFocusImage = () => {
+    if (!workoutData.goal || !workoutData.focus) return null;
+    const focusOptions =
+      WORKOUT_FOCUS_OPTIONS_SPORTS[workoutData.goal as WorkoutGoalSport] || [];
+    const selectedFocus = focusOptions.find(
+      (option) => option.title === workoutData.focus
+    );
+    return selectedFocus?.image;
+  };
 
+  const changeGoal = () => {
+    router.push({
+      pathname: "/GetStarted",
+      params: { index: 2 },
+    });
+  };
+  const focusImage = getFocusImage();
   return (
-    <View style={styles.container}>
-      <View style={styles.Headersection}>
-        <Image
-          source={require("../../assets/images/ProfileAvatars/Male1.png")}
-          style={styles.reactLogo}
-        />
-      </View>
+    <SafeAreaView style={styles.container}>
+      <Image
+        source={require("../../assets/images/background2.png")}
+        style={styles.backgroundImage}
+      />
+      <View style={styles.overlay}>
+        <Text style={styles.title}>Trainee{"\n"} Overview</Text>
+        <Text style={styles.caption}>3 Months and Counting</Text>
 
-      <View style={styles.titleContainer}>
-        <Text style={styles.titleText}>Trainee Infromation</Text>
-        <View style={styles.infoContainersWrapper}>
-          <Text style={styles.infoboxTitle}>Skill level</Text>
-          <View style={styles.infoContainer}>
-            <Text style={styles.infoText}> {workoutData.level}</Text>
-          </View>
-          <Text style={styles.infoboxTitle}>Equipment</Text>
-          <View style={styles.infoContainer}>
-            <Text style={styles.infoText}> {workoutData.equipment}</Text>
+        <View style={styles.grid}>
+          <View style={styles.box}>
+            <View style={styles.levelCircle}>
+              <Text style={styles.levelText}>Level</Text>
+              <Text style={styles.levelNumber}>{workoutData.level}</Text>
+            </View>
           </View>
 
-          <Text style={styles.infoboxTitle}>Gender</Text>
-          <View style={styles.infoContainer}>
-            <Text style={styles.infoText}> {workoutData.gender}</Text>
+          <TouchableOpacity onPress={changeGoal}>
+            <View style={styles.box}>
+              <View
+                style={{
+                  flexDirection: "row",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  height: 40,
+                  width: 170,
+                }}
+              >
+                <Text style={styles.goalLabel}>Current Goal {"  "}</Text>
+                <MaterialCommunityIcons name="pencil" size={17} color="grey" />
+              </View>
+
+              {focusImage && (
+                <Image source={focusImage} style={styles.focusImage} />
+              )}
+              <Text style={styles.goalText}>{workoutData.goal}</Text>
+            </View>
+          </TouchableOpacity>
+          <View style={[styles.chartBox, { width: screenWidth * 0.9 }]}>
+            <Text style={styles.chartText}>Not enough data</Text>
           </View>
-          <Text style={styles.infoboxTitle}>Fitness goal</Text>
-          <View style={styles.infoContainer}>
-            <Text style={styles.infoText}> {workoutData.goal}</Text>
+
+          <View style={styles.box}>
+            <Text style={styles.metricLabel}>avg</Text>
+            <Text style={styles.metricMain}>Session length</Text>
+            <Text style={styles.metricValue}>52 min</Text>
+          </View>
+
+          <View style={styles.box}>
+            <Text style={styles.streakText}>🔥 3-Day Streak</Text>
+            <Text style={styles.lastSeen}>Last seen</Text>
+            <Text style={styles.lastSeenDate}>Yesterday</Text>
           </View>
         </View>
       </View>
-    </View>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  titleContainer: {
-    backgroundColor: "#101213",
-    height: 800,
-    marginTop: 70,
+  container: { flex: 1 },
+  backgroundImage: {
+    width: "100%",
+    height: "110%",
+    position: "absolute",
+    resizeMode: "cover",
+  },
+  focusImage: {
+    width: 70,
+    height: 70,
     borderRadius: 50,
-    borderCurve: "continuous",
-  },
-  infoboxTitle: {
-    color: "#5D5F60",
-    fontSize: 16,
-    fontWeight: "300",
-    marginTop: 20,
-    marginBottom: 2,
-    left: 15,
-  },
-  infoContainer: {
-    padding: 20,
-    borderWidth: 2,
-    borderColor: "#1B1D1E",
-    justifyContent: "center",
-    alignItems: "center",
-    borderRadius: 20,
-    borderCurve: "continuous",
-  },
-  infoContainersWrapper: {
-    width: 330,
-    justifyContent: "center",
     alignSelf: "center",
-    marginTop: 10,
   },
-
-  titleText: {
-    textAlign: "center",
-    fontSize: 20,
-    fontWeight: "600",
-    color: "white",
-    marginTop: 20,
-  },
-  container: {
+  overlay: {
     flex: 1,
-    backgroundColor: "#1A1C20",
-    marginBottom: 50,
-  },
-  listContainer: {
-    padding: 16,
-    gap: 16,
-  },
-  infoText: {
-    color: "white",
-    fontSize: 16,
-    fontWeight: "300",
-    textAlign: "center",
-    alignSelf: "center",
-    justifyContent: "center",
-  },
-  Headersection: {
-    width: 180,
-    height: 180,
-    alignSelf: "center",
-    top: 65,
-    justifyContent: "center",
+    alignItems: "center",
+    paddingTop: 0,
   },
   title: {
-    marginTop: 50,
-    fontSize: 20,
+    fontSize: 30,
+    width: 300,
     fontWeight: "400",
-    marginBottom: 16,
-    color: "#FFFFFF",
-    alignSelf: "center",
-  },
-  stepContainer: {
-    gap: 8,
-    marginBottom: 8,
-  },
-  generateButton: {
-    backgroundColor: "#FFA500",
-    width: 200,
-    height: 100,
-    justifyContent: "center",
-    alignItems: "center",
-    borderRadius: 30,
-    borderCurve: "continuous",
-    alignSelf: "center",
-    marginBottom: 30,
-    marginTop: 30,
-    shadowColor: "#FFA500",
-    shadowOffset: {
-      width: 0,
-      height: 0,
-    },
-    shadowOpacity: 0.5,
-    shadowRadius: 10,
-  },
-  reactLogo: {
-    resizeMode: "cover",
-    width: "100%",
-    height: "100%",
-  },
-  loadingText: {
-    color: "#FFA500",
-    fontSize: 16,
-    fontWeight: "300",
     textAlign: "center",
-    marginTop: 20,
-    alignSelf: "center",
-    justifyContent: "center",
+    color: "#FFFFFF",
   },
-  errorContainer: {
-    display: "flex",
+  caption: {
+    fontSize: 18,
+    color: "gray",
+    marginBottom: 40,
+  },
+  grid: {
+    flexWrap: "wrap",
     flexDirection: "row",
     justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "#F4405F",
-    padding: 20,
-    borderRadius: 20,
-    borderCurve: "continuous",
-    marginTop: 70,
+    gap: 5,
   },
-  errorText: {
-    color: "white",
-    fontSize: 18,
-    fontWeight: "300",
-    textAlign: "center",
-
-    alignSelf: "center",
+  box: {
+    backgroundColor: "#101213",
+    width: 170,
+    height: 170,
+    borderRadius: 15,
+    borderCurve: "continuous",
+    alignItems: "center",
     justifyContent: "center",
+    margin: 5,
+  },
+  levelCircle: {
+    borderWidth: 8,
+    borderColor: "limegreen",
+    borderRadius: 100,
+    width: 120,
+    height: 120,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  levelText: {
+    color: "white",
+    fontSize: 16,
+  },
+  levelNumber: {
+    color: "white",
+    fontSize: 40,
+    fontWeight: "bold",
+  },
+  goalLabel: {
+    color: "white",
+    fontSize: 17,
+    textAlign: "center",
+  },
+  goalText: {
+    color: "orange",
+    fontSize: 18,
+    fontWeight: "600",
+    marginTop: 5,
+  },
+  chartBox: {
+    backgroundColor: "#101213",
+    height: 170,
+    borderRadius: 15,
+    alignItems: "center",
+    justifyContent: "center",
+    marginVertical: 10,
+  },
+  chartText: {
+    color: "gray",
+    fontSize: 14,
+  },
+  metricLabel: {
+    color: "gray",
+    fontSize: 12,
+  },
+  metricMain: {
+    color: "white",
+    fontSize: 14,
+  },
+  metricValue: {
+    color: "white",
+    fontSize: 20,
+    fontWeight: "bold",
+  },
+  streakText: {
+    color: "orange",
+    fontSize: 14,
+    fontWeight: "bold",
+  },
+  lastSeen: {
+    color: "gray",
+    fontSize: 12,
+    marginTop: 5,
+  },
+  lastSeenDate: {
+    color: "white",
+    fontSize: 16,
+    fontWeight: "500",
   },
 });

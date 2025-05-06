@@ -16,10 +16,12 @@ import { WORKOUT_FOCUS_OPTIONS_SPORTS } from "../assets/data/workouts/focusOptio
 interface WorkoutPlanDisplayProps {
   plan: WorkoutPlan | null;
   setShowWorkoutPlan: (show: boolean) => void;
+  setCurrentIndex: (index: number) => void;
 }
 export const WorkoutPlanDisplay = ({
   plan,
   setShowWorkoutPlan,
+  setCurrentIndex,
 }: WorkoutPlanDisplayProps) => {
   const { updateWorkoutData, workoutData } = useWorkout();
   console.log("Workout Data:", workoutData);
@@ -57,6 +59,7 @@ export const WorkoutPlanDisplay = ({
               duration: "",
               equipment: "",
             });
+            setCurrentIndex(0);
           },
         },
       ],
@@ -86,7 +89,12 @@ export const WorkoutPlanDisplay = ({
         <Text style={styles.title}>{plan.title}</Text>
       </View>
       <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Warmup ({plan.warmup.duration})</Text>
+        <Text style={styles.sectionTitle}>
+          Warmup
+          <Text style={{ color: "#FFA500", fontWeight: 600 }}>
+            {"  "}({plan.warmup.duration})
+          </Text>
+        </Text>
         {plan.warmup.exercises.map((exercise, index) => (
           <View key={index} style={styles.exercise}>
             <Text style={styles.exerciseName}>{exercise.name}</Text>
@@ -100,7 +108,10 @@ export const WorkoutPlanDisplay = ({
 
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>
-          Main Workout ({plan.mainWorkout.duration})
+          Main Workout
+          <Text style={{ color: "#FFA500", fontWeight: 600 }}>
+            {"  "}({plan.mainWorkout.duration})
+          </Text>
         </Text>
         {plan.mainWorkout.exercises.map((exercise, index) => (
           <View key={index} style={styles.exercise}>
@@ -118,7 +129,10 @@ export const WorkoutPlanDisplay = ({
 
       <View style={styles.lastSection}>
         <Text style={styles.sectionTitle}>
-          Cooldown ({plan.cooldown.duration}) min
+          Cooldown
+          <Text style={{ color: "#FFA500", fontWeight: 600 }}>
+            {"  "}({plan.cooldown.duration})
+          </Text>
         </Text>
         {plan.cooldown.stretches.map((stretch, index) => (
           <View key={index} style={styles.exercise}>
@@ -172,7 +186,7 @@ const styles = StyleSheet.create({
     marginBottom: 60,
   },
   sectionTitle: {
-    color: "#FFA500",
+    color: "white",
     fontSize: 22,
     fontWeight: "800",
     marginBottom: 8,
@@ -180,7 +194,7 @@ const styles = StyleSheet.create({
   },
   exercise: {
     padding: 12,
-    backgroundColor: "#1E2022",
+    backgroundColor: "#101213",
 
     gap: 4,
     borderRadius: 20,

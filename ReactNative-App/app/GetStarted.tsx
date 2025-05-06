@@ -5,75 +5,33 @@ import {
   View,
   FlatList,
 } from "react-native";
-import { useState, useRef, JSX } from "react";
+import { useState, useRef, JSX, useEffect } from "react";
 import { useWorkout } from "../contexts/WorkoutContext";
-import { router } from "expo-router";
 import Slider from "@react-native-community/slider";
 import Icon from "@expo/vector-icons/FontAwesome";
-import Animated, {
-  FadeIn,
-  FadeOut,
-  SlideInDown,
-  SlideOutUp,
-  withSpring,
-  useAnimatedStyle,
-  withTiming,
-  useSharedValue,
-} from "react-native-reanimated";
-import { WORKOUT_GOALS, WORKOUT_GOALS_SPORTS } from "@/types/workout";
+import Animated, { FadeIn } from "react-native-reanimated";
+import { ChoosePrimaryGoal } from "@/components/ChoosePrimaryGoal";
+import { useLocalSearchParams, router } from "expo-router";
 interface QuestionItem {
   id: string;
   component: JSX.Element;
 }
 export default function IntroScreen() {
   const { updateWorkoutData } = useWorkout();
-  const [duration, setDuration] = useState(15);
-  const [selectedGoal, setSelectedGoal] = useState<string | null>(null);
   const flatListRef = useRef<FlatList<QuestionItem>>(null);
-  const [currentIndex, setCurrentIndex] = useState(0);
   const [selectedGender, setSelectedGender] = useState<string | null>(null);
   const GENDER_OPTIONS = ["Female", "Male", "Other"];
-  const [selectedEquipment, setSelectedEquipment] = useState<string | null>(
-    null
-  );
-  const [showFitnessGoals, setShowFitnessGoals] = useState(false);
-  const [showSportsGoals, setShowSportsGoals] = useState(false);
-  const fitnessHeight = useSharedValue(0);
-  const sportsHeight = useSharedValue(0);
-  const toggleFitnessMenu = () => {
-    if (showSportsGoals) {
-      sportsHeight.value = withTiming(0, { duration: 300 });
-      setShowSportsGoals(false);
+  const params = useLocalSearchParams();
+  const initialIndex = params.index ? Number(params.index) - 1 : 0;
+  const [currentIndex, setCurrentIndex] = useState(initialIndex);
+  useEffect(() => {
+    if (initialIndex > 0) {
+      flatListRef.current?.scrollToIndex({
+        index: initialIndex,
+        animated: false,
+      });
     }
-
-    fitnessHeight.value = withTiming(showFitnessGoals ? 0 : 120, {
-      duration: 300,
-    });
-    setShowFitnessGoals(!showFitnessGoals);
-  };
-  const toggleSportsMenu = () => {
-    if (showFitnessGoals) {
-      fitnessHeight.value = withTiming(0, { duration: 300 });
-      setShowFitnessGoals(false);
-    }
-
-    sportsHeight.value = withTiming(showSportsGoals ? 0 : 180, {
-      duration: 300,
-    });
-    setShowSportsGoals(!showSportsGoals);
-  };
-
-  const fitnessAnimatedStyle = useAnimatedStyle(() => ({
-    height: fitnessHeight.value,
-    opacity: withTiming(fitnessHeight.value === 0 ? 0 : 1),
-    overflow: "hidden",
-  }));
-
-  const sportsAnimatedStyle = useAnimatedStyle(() => ({
-    height: sportsHeight.value,
-    opacity: withTiming(sportsHeight.value === 0 ? 0 : 1),
-    overflow: "hidden",
-  }));
+  }, []);
   const nextScreen = () => {
     if (currentIndex < questions.length - 1) {
       flatListRef.current?.scrollToIndex({
@@ -82,15 +40,6 @@ export default function IntroScreen() {
       });
       setCurrentIndex(currentIndex + 1);
     } else {
-      // Save all data before navigation
-      updateWorkoutData({
-        goal: selectedGoal || "",
-        equipment: selectedEquipment || "",
-        duration: duration.toString(),
-        level: "0", // Add state for this if needed
-        gender: selectedGender || "",
-      });
-
       router.push("/(tabs)");
     }
   };
@@ -98,13 +47,14 @@ export default function IntroScreen() {
     setSelectedGender(gender);
     updateWorkoutData({ gender });
   };
-  const handleGoalButtonPress = (goal: string) => {
-    setSelectedGoal(goal);
-    updateWorkoutData({ goal });
-  };
-
+  const getItemLayout = (_: any, index: number) => ({
+    length: 350,
+    offset: 350 * index,
+    index,
+  });
   const handleLevelChange = (value: number) => {
-    updateWorkoutData({ level: value.toString() });
+    const formattedValue = value.toFixed(1);
+    updateWorkoutData({ level: formattedValue });
   };
 
   const renderItem = ({ item }: { item: QuestionItem }) => item.component;
@@ -169,89 +119,7 @@ export default function IntroScreen() {
       id: "2",
       component: (
         <Animated.View entering={FadeIn}>
-          <View
-            style={{
-              width: 350,
-              alignItems: "center",
-              gap: 50,
-
-              height: 400,
-            }}
-          >
-            <View>
-              <TouchableOpacity
-                style={{
-                  flexDirection: "row",
-                  alignItems: "center",
-                  gap: 10,
-                  marginVertical: 15,
-                }}
-                onPress={toggleFitnessMenu}
-              >
-                <Text style={styles.questionTitle}>Fitness? </Text>
-                <Icon
-                  name={showFitnessGoals ? "chevron-down" : "chevron-right"}
-                  size={20}
-                  color="#FFFFFF"
-                />
-              </TouchableOpacity>
-              <Animated.View
-                style={[styles.goalsContainer, fitnessAnimatedStyle]}
-              >
-                {WORKOUT_GOALS.map((goal) => (
-                  <TouchableOpacity
-                    key={goal}
-                    style={[
-                      styles.goalButton,
-                      {
-                        backgroundColor:
-                          selectedGoal === goal ? "#FFA31A" : "#1E2022",
-                      },
-                    ]}
-                    onPress={() => handleGoalButtonPress(goal)}
-                  >
-                    <Text style={styles.goalButtonText}>{goal}</Text>
-                  </TouchableOpacity>
-                ))}
-              </Animated.View>
-              <TouchableOpacity
-                style={{
-                  flexDirection: "row",
-                  alignItems: "center",
-                  gap: 10,
-                  marginVertical: 15,
-                }}
-                onPress={toggleSportsMenu}
-              >
-                <Text style={styles.questionTitle}>Sport performance?</Text>
-                <Icon
-                  name={showSportsGoals ? "chevron-down" : "chevron-right"}
-                  size={20}
-                  color="#FFFFFF"
-                />
-              </TouchableOpacity>
-
-              <Animated.View
-                style={[styles.goalsContainer, sportsAnimatedStyle]}
-              >
-                {WORKOUT_GOALS_SPORTS.map((goal) => (
-                  <TouchableOpacity
-                    key={goal}
-                    style={[
-                      styles.goalButton,
-                      {
-                        backgroundColor:
-                          selectedGoal === goal ? "#FFA31A" : "#1E2022",
-                      },
-                    ]}
-                    onPress={() => handleGoalButtonPress(goal)}
-                  >
-                    <Text style={styles.goalButtonText}>{goal}</Text>
-                  </TouchableOpacity>
-                ))}
-              </Animated.View>
-            </View>
-          </View>
+          <ChoosePrimaryGoal />
         </Animated.View>
       ),
     },
@@ -280,6 +148,7 @@ export default function IntroScreen() {
         scrollEnabled={false}
         keyExtractor={(item) => item.id}
         style={{ flex: 1, width: 350 }}
+        getItemLayout={getItemLayout}
         contentContainerStyle={styles.flatListContainer}
       />
 

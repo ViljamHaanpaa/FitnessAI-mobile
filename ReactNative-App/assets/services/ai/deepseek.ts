@@ -83,6 +83,7 @@ export const generateWorkoutPlan = async (workoutData: WorkoutData) => {
           "duration",
           "gender",
           "equipment",
+          "timestamp",
           "warmup",
           "mainWorkout",
           "cooldown",
@@ -107,9 +108,17 @@ export const generateWorkoutPlan = async (workoutData: WorkoutData) => {
         },
         {
           role: "user",
-          content: `
-          Generate ${workoutData.focus}focused workout for a ${workoutData.goal} ${workoutData.level} level ${workoutData.gender} using ${workoutData.equipment} trying to achieve ${workoutData.goal}.
-          `,
+          content: `Create a personalized workout plan with the following specifications:
+            - Primary Focus: ${workoutData.focus || "General"}
+            - Goal: ${workoutData.goal}
+            - Experience Level: ${workoutData.level}/10
+            - Gender: ${workoutData.gender}
+            - Available Equipment: ${workoutData.equipment || "Bodyweight only"}
+            - Duration: ${workoutData.duration || "45"} minutes
+            - Session Type: Progressive workout targeting ${workoutData.goal}
+            - Timestamp: ${new Date().toISOString()}
+            
+            Please structure the workout with proper warm-up, main exercises, and cool-down sections.`,
         },
       ],
       tools: [toolSchema],

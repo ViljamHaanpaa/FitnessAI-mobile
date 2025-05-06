@@ -1,4 +1,4 @@
-import { useState, useRef, JSX } from "react";
+import { useState, useRef, JSX, useEffect, use } from "react";
 import {
   Image,
   StyleSheet,
@@ -43,6 +43,7 @@ export default function HomeScreen() {
   const [showErrorMessage, setShowErrorMessage] = useState(false);
   const [showWorkoutPlan, setShowWorkoutPlan] = useState(false);
   const flatListRef = useRef<FlatList<QuestionItem>>(null);
+
   interface QuestionItem {
     id: string;
     component: JSX.Element;
@@ -67,7 +68,8 @@ export default function HomeScreen() {
   };
   const handleDurationChange = (value: number) => {
     setDuration(value);
-    updateWorkoutData({ duration: value.toString() });
+    const formattedvalue = value.toFixed(0);
+    updateWorkoutData({ duration: formattedvalue });
   };
   const handleEquipmentButtonPress = (equipment: string) => {
     setSelectedEquipment(equipment);
@@ -124,6 +126,11 @@ export default function HomeScreen() {
       setLoading(false);
     }
   };
+  const getItemLayout = (_: any, index: number) => ({
+    length: 350,
+    offset: 350 * index,
+    index,
+  });
   const renderItem = ({ item }: { item: QuestionItem }) => item.component;
   const questions: QuestionItem[] = [
     ...(workoutData.goal && !getCurrentFocusOptions().length
@@ -275,6 +282,7 @@ export default function HomeScreen() {
             pagingEnabled
             showsHorizontalScrollIndicator={false}
             scrollEnabled={false}
+            getItemLayout={getItemLayout}
             keyExtractor={(item) => item.id}
             style={{ flex: 1, width: "100%" }}
             contentContainerStyle={styles.flatListContainer}
@@ -304,6 +312,7 @@ export default function HomeScreen() {
             <WorkoutPlanDisplay
               plan={plan}
               setShowWorkoutPlan={setShowWorkoutPlan}
+              setCurrentIndex={setCurrentIndex}
             />
           )}
         </>
