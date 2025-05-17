@@ -17,7 +17,7 @@ export const ChoosePrimaryGoal = () => {
 
   const handleGoalButtonPress = (goal: string) => {
     setSelectedGoal(goal);
-    updateWorkoutData({ goal });
+    updateWorkoutData({ goal, focus: "" });
   };
   // Initialize shared values
   const fitnessHeight = useSharedValue(0);

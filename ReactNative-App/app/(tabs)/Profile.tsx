@@ -1,4 +1,3 @@
-import { useState } from "react";
 import {
   StyleSheet,
   View,
@@ -12,12 +11,10 @@ import { WorkoutGoalSport } from "@/types/workout";
 import { useWorkout } from "@/contexts/WorkoutContext";
 import { WORKOUT_FOCUS_OPTIONS_SPORTS } from "../../assets/data/workouts/focusOptions";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { useRouter } from "expo-router";
+import { navigateToGoalSelection } from "@/utils/navigationHelpers";
 export default function Profile() {
   const { workoutData } = useWorkout();
   const screenWidth = Dimensions.get("window").width;
-  const [showGoalPicker, setShowGoalPicker] = useState(false);
-  const router = useRouter();
   const getFocusImage = () => {
     if (!workoutData.goal || !workoutData.focus) return null;
     const focusOptions =
@@ -28,12 +25,6 @@ export default function Profile() {
     return selectedFocus?.image;
   };
 
-  const changeGoal = () => {
-    router.push({
-      pathname: "/GetStarted",
-      params: { index: 2 },
-    });
-  };
   const focusImage = getFocusImage();
   return (
     <SafeAreaView style={styles.container}>
@@ -53,25 +44,28 @@ export default function Profile() {
             </View>
           </View>
 
-          <TouchableOpacity onPress={changeGoal}>
+          <TouchableOpacity onPress={navigateToGoalSelection}>
             <View style={styles.box}>
-              <View
-                style={{
-                  flexDirection: "row",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  height: 40,
-                  width: 170,
-                }}
-              >
-                <Text style={styles.goalLabel}>Current Goal {"  "}</Text>
-                <MaterialCommunityIcons name="pencil" size={17} color="grey" />
-              </View>
+              <Text style={styles.goalLabel}>Current Goal {"  "}</Text>
 
               {focusImage && (
                 <Image source={focusImage} style={styles.focusImage} />
               )}
-              <Text style={styles.goalText}>{workoutData.goal}</Text>
+              <View
+                style={{
+                  flexDirection: "row",
+                  alignItems: "center",
+                  marginTop: 10,
+                }}
+              >
+                <Text style={styles.goalText}>{workoutData.goal}</Text>
+                <MaterialCommunityIcons
+                  name="pencil"
+                  size={17}
+                  color="grey"
+                  style={{ left: 5 }}
+                />
+              </View>
             </View>
           </TouchableOpacity>
           <View style={[styles.chartBox, { width: screenWidth * 0.9 }]}>
@@ -163,13 +157,16 @@ const styles = StyleSheet.create({
   goalLabel: {
     color: "white",
     fontSize: 17,
+    marginBottom: 10,
     textAlign: "center",
   },
   goalText: {
     color: "orange",
-    fontSize: 18,
+    fontSize: 20,
     fontWeight: "600",
-    marginTop: 5,
+    textAlign: "center",
+    alignSelf: "center",
+    left: 5,
   },
   chartBox: {
     backgroundColor: "#101213",

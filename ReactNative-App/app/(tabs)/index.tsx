@@ -1,15 +1,15 @@
-import { useState, useRef, JSX, useEffect, use } from "react";
+import { useState, useRef, JSX, useEffect, useCallback } from "react";
 import {
   Image,
   StyleSheet,
   TouchableOpacity,
   Text,
   View,
-  ActivityIndicator,
   SafeAreaView,
   FlatList,
 } from "react-native";
 import Icon from "@expo/vector-icons/FontAwesome";
+import { AutoReverseLottie } from "@/components/animations/AutoReverseLottie";
 import { WorkoutPlanDisplay } from "@/components/WorkoutPlanDisplay";
 import { useWorkout } from "../../contexts/WorkoutContext";
 import { generateWorkoutPlan } from "../../assets/services/ai/deepseek";
@@ -23,16 +23,10 @@ import {
   WorkoutGoalSport,
 } from "@/types/workout";
 import Slider from "@react-native-community/slider";
-import Animated, {
-  FadeIn,
-  FadeOut,
-  SlideInDown,
-  SlideOutUp,
-  withSpring,
-  useAnimatedStyle,
-  withTiming,
-  useSharedValue,
-} from "react-native-reanimated";
+import Animated from "react-native-reanimated";
+import { useFocusEffect } from "expo-router";
+import { navigateToGoalSelection } from "@/utils/navigationHelpers";
+import LottieView from "lottie-react-native";
 export default function HomeScreen() {
   const [duration, setDuration] = useState(60);
   const [selectedEquipment, setSelectedEquipment] = useState("No Equipment");
@@ -48,6 +42,18 @@ export default function HomeScreen() {
     id: string;
     component: JSX.Element;
   }
+  useFocusEffect(
+    useCallback(() => {
+      // Reset states when screen comes into focus
+      flatListRef.current?.scrollToIndex({
+        index: 0,
+        animated: false,
+      });
+      setCurrentIndex(0);
+      console.log("HomeScreen focused");
+    }, [])
+  );
+
   const equipment = [
     "No Equipment",
     "Home Gym Equipment",
@@ -127,8 +133,8 @@ export default function HomeScreen() {
     }
   };
   const getItemLayout = (_: any, index: number) => ({
-    length: 350,
-    offset: 350 * index,
+    length: 400,
+    offset: 400 * index,
     index,
   });
   const renderItem = ({ item }: { item: QuestionItem }) => item.component;
@@ -143,7 +149,14 @@ export default function HomeScreen() {
                 <View style={styles.titleContainer}>
                   <Text style={styles.title}>
                     Ready to improve your{" "}
-                    <Text style={{ color: "#FFA31A" }}>{workoutData.goal}</Text>{" "}
+                    <TouchableOpacity onPress={navigateToGoalSelection}>
+                      <Text
+                        style={styles.titleGoal}
+                        onPress={navigateToGoalSelection}
+                      >
+                        {workoutData.goal}
+                      </Text>
+                    </TouchableOpacity>{" "}
                     today?
                   </Text>
                   <Text style={styles.titleDescription}>
@@ -236,7 +249,7 @@ export default function HomeScreen() {
           <View
             style={{
               alignItems: "center",
-              width: 400,
+
               marginTop: 190,
               alignSelf: "center",
             }}
@@ -284,7 +297,6 @@ export default function HomeScreen() {
             scrollEnabled={false}
             getItemLayout={getItemLayout}
             keyExtractor={(item) => item.id}
-            style={{ flex: 1, width: "100%" }}
             contentContainerStyle={styles.flatListContainer}
           />
           <TouchableOpacity
@@ -304,8 +316,8 @@ export default function HomeScreen() {
       ) : (
         <>
           {loading ? (
-            <View style={{ top: 300, alignItems: "center" }}>
-              <ActivityIndicator size="small" color="#FFA500" style={{}} />
+            <View style={{ top: 200, alignItems: "center" }}>
+              <AutoReverseLottie />
               <Text style={styles.loadingText}>Generating workout plan...</Text>
             </View>
           ) : (
@@ -360,7 +372,7 @@ const styles = StyleSheet.create({
     textAlign: "left",
     color: "#FFFFFF",
     marginBottom: 20,
-    width: 330,
+
     fontWeight: 300,
     lineHeight: 25,
   },
@@ -421,7 +433,7 @@ const styles = StyleSheet.create({
     resizeMode: "cover",
   },
   equipmentButton: {
-    width: 300,
+    width: 320,
     borderRadius: 10,
     padding: 30,
     justifyContent: "center",
@@ -443,10 +455,18 @@ const styles = StyleSheet.create({
     fontSize: 35,
     color: "#FFFFFF",
     textAlign: "left",
-    width: 350,
+    width: 360,
     fontWeight: 400,
     letterSpacing: 1,
     lineHeight: 40,
+  },
+  titleGoal: {
+    fontSize: 35,
+    color: "#FFA31A",
+
+    fontWeight: 500,
+    letterSpacing: 1,
+    top: 20,
   },
   stepContainer: {
     gap: 8,

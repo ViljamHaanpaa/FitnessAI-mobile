@@ -47,7 +47,7 @@ export const WorkoutProvider = ({ children }: { children: ReactNode }) => {
     gender: "",
     goal: "",
     level: "",
-    duration: "",
+    duration: "60",
     equipment: "",
     focus: "",
     workoutGenerated: false,
