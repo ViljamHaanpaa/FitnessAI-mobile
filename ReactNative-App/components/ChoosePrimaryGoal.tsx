@@ -41,7 +41,7 @@ export const ChoosePrimaryGoal = () => {
       sportsHeight.value = withTiming(0);
       setShowSportsGoals(false);
     }
-    fitnessHeight.value = withTiming(showFitnessGoals ? 0 : 120);
+    fitnessHeight.value = withTiming(showFitnessGoals ? 0 : 180);
     setShowFitnessGoals(!showFitnessGoals);
   };
 

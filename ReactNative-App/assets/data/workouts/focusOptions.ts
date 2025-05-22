@@ -14,13 +14,14 @@ import { volleyballOptions } from "./constants/sportPerformance/volleyball/volle
 import { cyclingOptions } from "./constants/sportPerformance/cycling/cycling";
 import { runningOptions } from "./constants/sportPerformance/running/running";
 import { swimmingOptions } from "./constants/sportPerformance/swimming/swiming";
-
+import { calisthenicsOptions } from "./constants/Fitness/calisthenics/calisthenics";
 export const WORKOUT_FOCUS_OPTIONS: Record<WorkoutGoal, FocusOption[]> = {
   "Muscle Gain": muscleGainOptions,
   "Weight Loss": weightLossOptions,
   Strength: strengthOptions,
   Endurance: enduranceOptions,
   Mobility: mobilityOptions,
+  Calisthenics: calisthenicsOptions,
 };
 
 export const WORKOUT_FOCUS_OPTIONS_SPORTS: Record<

@@ -9,7 +9,8 @@ export type WorkoutGoal =
   | "Muscle Gain"
   | "Strength"
   | "Endurance"
-  | "Mobility";
+  | "Mobility"
+  | "Calisthenics";
 
 export type WorkoutGoalSport =
   | "Golf"
