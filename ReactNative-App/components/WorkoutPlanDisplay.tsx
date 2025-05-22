@@ -15,12 +15,10 @@ import { useWorkout, SaveWorkout } from "@/contexts/WorkoutContext";
 import { WORKOUT_FOCUS_OPTIONS_SPORTS } from "../assets/data/workouts/focusOptions";
 interface WorkoutPlanDisplayProps {
   plan: WorkoutPlan | null;
-  setShowWorkoutPlan: (show: boolean) => void;
   setCurrentIndex: (index: number) => void;
 }
 export const WorkoutPlanDisplay = ({
   plan,
-  setShowWorkoutPlan,
   setCurrentIndex,
 }: WorkoutPlanDisplayProps) => {
   const { updateWorkoutData, workoutData } = useWorkout();
@@ -52,12 +50,12 @@ export const WorkoutPlanDisplay = ({
           text: "Discard",
           style: "destructive",
           onPress: () => {
-            setShowWorkoutPlan(false);
             updateWorkoutData({
               workoutGenerated: false,
               focus: "",
               duration: "",
               equipment: "",
+              currentWorkoutPlan: null,
             });
             setCurrentIndex(0);
           },

@@ -32,10 +32,8 @@ export default function HomeScreen() {
   const [selectedEquipment, setSelectedEquipment] = useState("No Equipment");
   const { updateWorkoutData, workoutData } = useWorkout();
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [plan, setPlan] = useState<any | null>(null);
   const [loading, setLoading] = useState(false);
   const [showErrorMessage, setShowErrorMessage] = useState(false);
-  const [showWorkoutPlan, setShowWorkoutPlan] = useState(false);
   const flatListRef = useRef<FlatList<QuestionItem>>(null);
 
   interface QuestionItem {
@@ -96,7 +94,6 @@ export default function HomeScreen() {
   let MAX_RETRIES = 3;
 
   const generatePlan = async () => {
-    setShowWorkoutPlan(true);
     setLoading(true);
     try {
       if (!workoutData.goal || !workoutData.level) {
@@ -108,9 +105,9 @@ export default function HomeScreen() {
           const generatedPlan = await generateWorkoutPlan(workoutData);
           if (generatedPlan) {
             console.log("Generated plan:", generatedPlan);
-            setPlan(generatedPlan);
             updateWorkoutData({
               workoutGenerated: true,
+              currentWorkoutPlan: generatedPlan,
             });
             return;
           }
@@ -126,7 +123,6 @@ export default function HomeScreen() {
       );
     } catch (error) {
       console.error("Error generating plan:", error);
-      setPlan(null);
       setShowErrorMessage(true);
     } finally {
       setLoading(false);
@@ -285,7 +281,7 @@ export default function HomeScreen() {
         source={require("../../assets/images/background2.png")}
         style={styles.backgroundImage}
       />
-      {!showWorkoutPlan ? (
+      {!workoutData.currentWorkoutPlan && !loading ? (
         <>
           <Animated.FlatList<QuestionItem>
             ref={flatListRef}
@@ -322,8 +318,7 @@ export default function HomeScreen() {
             </View>
           ) : (
             <WorkoutPlanDisplay
-              plan={plan}
-              setShowWorkoutPlan={setShowWorkoutPlan}
+              plan={workoutData.currentWorkoutPlan}
               setCurrentIndex={setCurrentIndex}
             />
           )}
