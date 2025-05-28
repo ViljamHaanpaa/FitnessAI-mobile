@@ -5,7 +5,8 @@
     "paths": {
       "@/*": ["./*"]
     },
-    "typeRoots": ["./types"]
+    "typeRoots": ["./types"],
+    "jsx": "react-native"
   },
   "include": [
     "**/*.ts",

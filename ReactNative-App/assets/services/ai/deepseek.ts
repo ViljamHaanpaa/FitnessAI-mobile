@@ -14,21 +14,30 @@ export const generateWorkoutPlan = async (workoutData: WorkoutData) => {
         type: "object",
         properties: {
           title: { type: "string", description: "Workout title" },
-          duration: { type: "string" },
+          duration: {
+            type: "string",
+            description: "Duration in seconds (e.g. '120')",
+          },
           gender: { type: "string" },
           equipment: { type: "string" },
           timestamp: { type: "string" },
           warmup: {
             type: "object",
             properties: {
-              duration: { type: "string" },
+              duration: {
+                type: "string",
+                description: "Duration in seconds (e.g. '120')",
+              },
               exercises: {
                 type: "array",
                 items: {
                   type: "object",
                   properties: {
                     name: { type: "string" },
-                    duration: { type: "string" },
+                    duration: {
+                      type: "string",
+                      description: "Duration in seconds (e.g. '120')",
+                    },
                     description: { type: "string" },
                   },
                   required: ["name", "duration", "description"],
@@ -40,7 +49,10 @@ export const generateWorkoutPlan = async (workoutData: WorkoutData) => {
           mainWorkout: {
             type: "object",
             properties: {
-              duration: { type: "string" },
+              duration: {
+                type: "string",
+                description: "Duration in seconds (e.g. '120')",
+              },
               exercises: {
                 type: "array",
                 items: {
@@ -61,14 +73,20 @@ export const generateWorkoutPlan = async (workoutData: WorkoutData) => {
           cooldown: {
             type: "object",
             properties: {
-              duration: { type: "string" },
+              duration: {
+                type: "string",
+                description: "Duration in seconds (e.g. '120')",
+              },
               stretches: {
                 type: "array",
                 items: {
                   type: "object",
                   properties: {
                     name: { type: "string" },
-                    duration: { type: "string" },
+                    duration: {
+                      type: "string",
+                      description: "Duration in seconds (e.g. '120')",
+                    },
                     description: { type: "string" },
                   },
                   required: ["name", "duration", "description"],
@@ -117,6 +135,8 @@ export const generateWorkoutPlan = async (workoutData: WorkoutData) => {
             - Duration: ${workoutData.duration || "45"} minutes
             - Session Type: Progressive workout targeting ${workoutData.goal}
             - Timestamp: ${new Date().toISOString()}
+            
+            IMPORTANT: All durations must be given as a string representing the number of seconds (e.g. "120"), NOT as text like "2 minutes".
             
             Please structure the workout with proper warm-up, main exercises, and cool-down sections.`,
         },

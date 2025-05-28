@@ -1,16 +1,55 @@
 import { Tabs } from "expo-router";
-import React from "react";
-import { Platform } from "react-native";
+import React, { useState } from "react";
+import { Platform, TouchableOpacity } from "react-native";
 import { HapticTab } from "@/components/HapticTab";
 import { IconSymbol } from "@/components/ui/IconSymbol";
 import TabBarBackground from "@/components/ui/TabBarBackground";
 import { Colors } from "@/constants/Colors";
 import { useColorScheme } from "@/hooks/useColorScheme";
-
+import { router } from "expo-router";
 import { useWorkout } from "../../contexts/WorkoutContext";
+import Animated, {
+  useSharedValue,
+  useAnimatedStyle,
+  withRepeat,
+  withSequence,
+  withTiming,
+} from "react-native-reanimated";
 export default function TabLayout() {
   const { workoutData } = useWorkout();
   const colorScheme = useColorScheme();
+  const [playPressedOnce, setPlayPressedOnce] = useState(false);
+  const shadowRadius = useSharedValue(20);
+  const animatedShadowStyle = useAnimatedStyle(() => ({
+    shadowRadius: shadowRadius.value,
+  }));
+
+  // 3. Start breathing animation on mount
+  React.useEffect(() => {
+    shadowRadius.value = withRepeat(
+      withSequence(
+        withTiming(0, { duration: 1200 }),
+        withTiming(7, { duration: 1200 })
+      ),
+      -1,
+      true
+    );
+  }, []);
+  const handlePlayPress = () => {
+    if (workoutData.workoutGenerated) {
+      if (playPressedOnce) {
+        router.push({
+          pathname: "/WorkoutSessionScreen",
+        });
+      } else {
+        setPlayPressedOnce(true);
+        router.push({
+          pathname: "/",
+        });
+      }
+    }
+  };
+
   return (
     <Tabs
       screenOptions={{
@@ -53,11 +92,25 @@ export default function TabLayout() {
                 color={focused ? "#FFA500" : color}
               />
             ) : (
-              <IconSymbol
-                size={65}
-                name="checkmark.circle.fill"
-                color={focused ? "#00FF66" : "#006633"}
-              />
+              <TouchableOpacity onPress={handlePlayPress}>
+                <Animated.View
+                  style={[
+                    {
+                      shadowColor: "#00FF66",
+                      shadowOpacity: focused ? 0.7 : 0.0,
+                      borderRadius: 0,
+                      shadowOffset: { width: 0, height: 0 },
+                    },
+                    animatedShadowStyle,
+                  ]}
+                >
+                  <IconSymbol
+                    size={75}
+                    name="play.circle.fill"
+                    color={focused ? "#00FF66" : "#006633"}
+                  />
+                </Animated.View>
+              </TouchableOpacity>
             ),
         }}
       />
