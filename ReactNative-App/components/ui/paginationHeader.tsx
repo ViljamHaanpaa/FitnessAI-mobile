@@ -5,12 +5,16 @@ interface PaginationHeaderProps {
   allExercises: any[];
   currentPage: number;
   handlePageChange: (index: number) => void;
+  onOpenInstructions?: (exercise: any) => void;
+  handleFinishWorkout?: () => void;
 }
 
 export function PaginationHeader({
   allExercises,
   currentPage,
   handlePageChange,
+  onOpenInstructions,
+  handleFinishWorkout,
 }: PaginationHeaderProps) {
   const total = allExercises.length;
 
@@ -19,19 +23,10 @@ export function PaginationHeader({
   return (
     <View style={styles.paginationContainer}>
       <TouchableOpacity
-        key="prev"
-        onPress={() => handlePageChange(Math.max(0, currentPage - 1))}
-        style={[styles.pageNavButton, { marginRight: 10 }]}
-        disabled={currentPage === 0}
+        onPress={() => onOpenInstructions?.(allExercises[currentPage])}
+        style={[styles.tipsButton, { marginRight: 10 }]}
       >
-        <Text
-          style={[
-            styles.pageButtonText,
-            currentPage === 0 && styles.activeButtonText,
-          ]}
-        >
-          Prev
-        </Text>
+        <Text style={[styles.tipsButtonText]}>Tips?</Text>
       </TouchableOpacity>
       {total <= 4 ? (
         allExercises.map((_, index) => (
@@ -55,7 +50,6 @@ export function PaginationHeader({
         ))
       ) : (
         <>
-          {/* Start: 1 2 3 ... N */}
           {currentPage < 2 && (
             <>
               {[0, 1, 2].map((index) => (
@@ -98,7 +92,6 @@ export function PaginationHeader({
             </>
           )}
 
-          {/* Middle: n n+1 n+2 ... N */}
           {currentPage >= 2 && currentPage < total - 2 && (
             <>
               <TouchableOpacity
@@ -151,7 +144,6 @@ export function PaginationHeader({
             </>
           )}
 
-          {/* End: 1 ... N-2 N-1 N */}
           {currentPage >= total - 2 && (
             <>
               <TouchableOpacity
@@ -196,19 +188,10 @@ export function PaginationHeader({
         </>
       )}
       <TouchableOpacity
-        key="next"
-        onPress={() => handlePageChange(Math.min(total - 1, currentPage + 1))}
+        onPress={handleFinishWorkout}
         style={[styles.pageNavButton, { marginLeft: 10 }]}
-        disabled={currentPage === total - 1}
       >
-        <Text
-          style={[
-            styles.pageButtonText,
-            currentPage === total - 1 && styles.activeButtonText,
-          ]}
-        >
-          Next
-        </Text>
+        <Text style={[styles.finishPageButtonText]}>Finish</Text>
       </TouchableOpacity>
     </View>
   );
@@ -221,7 +204,7 @@ const styles = StyleSheet.create({
     marginTop: 30,
     paddingHorizontal: 10,
     alignItems: "center",
-    zIndex: 10, // <-- Add this line
+    zIndex: 10,
   },
   pageButton: {
     backgroundColor: "#343535",
@@ -249,10 +232,21 @@ const styles = StyleSheet.create({
     color: "#fff",
     fontSize: 16,
   },
+  tipsButton: { borderRadius: 8, paddingHorizontal: 12, paddingVertical: 6 },
+
+  tipsButtonText: {
+    color: "#2F80ED",
+    fontSize: 16,
+  },
+  finishPageButtonText: {
+    color: "#2F80ED",
+    fontSize: 16,
+  },
   activePageButtonText: {
     color: "#fff",
     fontSize: 16,
   },
+
   ellipsis: {
     color: "#fff",
     fontSize: 18,

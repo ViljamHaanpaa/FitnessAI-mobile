@@ -90,13 +90,16 @@ export const WorkoutPlanDisplay = ({
         <Text style={styles.sectionTitle}>
           Warmup
           <Text style={{ color: "#FFA500", fontWeight: 600 }}>
-            {"  "}({plan.warmup.duration})
+            {"  "}
+            {Math.round(Number(plan.warmup.duration) / 60)} min
           </Text>
         </Text>
         {plan.warmup.exercises.map((exercise, index) => (
           <View key={index} style={styles.exercise}>
             <Text style={styles.exerciseName}>{exercise.name}</Text>
-            <Text style={styles.exerciseDuration}>{exercise.duration}</Text>
+            <Text style={styles.exerciseDuration}>
+              {Math.round(Number(exercise.duration) / 60)} min
+            </Text>
             <Text style={styles.exerciseDescription}>
               {exercise.description}
             </Text>
@@ -108,7 +111,8 @@ export const WorkoutPlanDisplay = ({
         <Text style={styles.sectionTitle}>
           Main Workout
           <Text style={{ color: "#FFA500", fontWeight: 600 }}>
-            {"  "}({plan.mainWorkout.duration})
+            {"  "}
+            {Math.round(Number(plan.mainWorkout.duration) / 60)} min
           </Text>
         </Text>
         {plan.mainWorkout.exercises.map((exercise, index) => (
@@ -116,7 +120,7 @@ export const WorkoutPlanDisplay = ({
             <Text style={styles.exerciseName}>{exercise.name}</Text>
             <Text style={styles.exerciseDuration}>
               Sets: {exercise.sets} | Reps: {exercise.reps} | Rest:{" "}
-              {exercise.rest}
+              {Math.round(Number(exercise.rest) / 60)} min
             </Text>
             <Text style={styles.exerciseDescription}>
               {exercise.description}
@@ -129,13 +133,16 @@ export const WorkoutPlanDisplay = ({
         <Text style={styles.sectionTitle}>
           Cooldown
           <Text style={{ color: "#FFA500", fontWeight: 600 }}>
-            {"  "}({plan.cooldown.duration})
+            {"  "}
+            {Math.round(Number(plan.cooldown.duration) / 60)} min
           </Text>
         </Text>
         {plan.cooldown.stretches.map((stretch, index) => (
           <View key={index} style={styles.exercise}>
             <Text style={styles.exerciseName}>{stretch.name}</Text>
-            <Text style={styles.exerciseDuration}>{stretch.duration}</Text>
+            <Text style={styles.exerciseDuration}>
+              {Math.round(Number(stretch.duration) / 60)} min
+            </Text>
             <Text style={styles.exerciseDescription}>
               {stretch.description}
             </Text>

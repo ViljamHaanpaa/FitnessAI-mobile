@@ -6,7 +6,6 @@ import {
   Text,
   View,
   SafeAreaView,
-  FlatList,
 } from "react-native";
 import Icon from "@expo/vector-icons/FontAwesome";
 import { AutoReverseLottie } from "@/components/animations/AutoReverseLottie";
@@ -23,10 +22,10 @@ import {
   WorkoutGoalSport,
 } from "@/types/workout";
 import Slider from "@react-native-community/slider";
-import Animated from "react-native-reanimated";
 import { useFocusEffect } from "expo-router";
 import { navigateToGoalSelection } from "@/utils/navigationHelpers";
-import LottieView from "lottie-react-native";
+import PagerView from "react-native-pager-view";
+
 export default function HomeScreen() {
   const [duration, setDuration] = useState(60);
   const [selectedEquipment, setSelectedEquipment] = useState("No Equipment");
@@ -34,7 +33,7 @@ export default function HomeScreen() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [loading, setLoading] = useState(false);
   const [showErrorMessage, setShowErrorMessage] = useState(false);
-  const flatListRef = useRef<FlatList<QuestionItem>>(null);
+  const pagerRef = useRef<PagerView>(null);
 
   interface QuestionItem {
     id: string;
@@ -43,10 +42,7 @@ export default function HomeScreen() {
   useFocusEffect(
     useCallback(() => {
       // Reset states when screen comes into focus
-      flatListRef.current?.scrollToIndex({
-        index: 0,
-        animated: false,
-      });
+      pagerRef.current?.setPage(0);
       setCurrentIndex(0);
       console.log("HomeScreen focused");
     }, [])
@@ -60,10 +56,7 @@ export default function HomeScreen() {
 
   const nextScreen = () => {
     if (currentIndex < questions.length - 1) {
-      flatListRef.current?.scrollToIndex({
-        index: currentIndex + 1,
-        animated: true,
-      });
+      pagerRef.current?.setPage(currentIndex + 1);
       setCurrentIndex(currentIndex + 1);
     } else {
       // Save all data before navigation
@@ -128,12 +121,7 @@ export default function HomeScreen() {
       setLoading(false);
     }
   };
-  const getItemLayout = (_: any, index: number) => ({
-    length: 400,
-    offset: 400 * index,
-    index,
-  });
-  const renderItem = ({ item }: { item: QuestionItem }) => item.component;
+
   const questions: QuestionItem[] = [
     ...(workoutData.goal && !getCurrentFocusOptions().length
       ? []
@@ -223,7 +211,7 @@ export default function HomeScreen() {
                       selectedEquipment === equipment ? "#FFA31A" : "#1E2022",
                   },
                 ]}
-                onPress={() => handleEquipmentButtonPress(equipment)} // Fix is here
+                onPress={() => handleEquipmentButtonPress(equipment)}
               >
                 <Text style={styles.equipmentButtonText}>{equipment}</Text>
               </TouchableOpacity>
@@ -245,7 +233,6 @@ export default function HomeScreen() {
           <View
             style={{
               alignItems: "center",
-
               marginTop: 190,
               alignSelf: "center",
             }}
@@ -283,24 +270,20 @@ export default function HomeScreen() {
       />
       {!workoutData.currentWorkoutPlan && !loading ? (
         <>
-          <Animated.FlatList<QuestionItem>
-            ref={flatListRef}
-            data={questions}
-            renderItem={renderItem}
-            horizontal
-            pagingEnabled
-            showsHorizontalScrollIndicator={false}
-            scrollEnabled={false}
-            getItemLayout={getItemLayout}
-            keyExtractor={(item) => item.id}
-            contentContainerStyle={styles.flatListContainer}
-          />
-          <TouchableOpacity
-            onPress={() => {
-              nextScreen();
-            }}
-            style={styles.generateButton}
+          <PagerView
+            style={{ flex: 1 }}
+            initialPage={0}
+            scrollEnabled={true}
+            ref={pagerRef}
+            onPageSelected={(e) => setCurrentIndex(e.nativeEvent.position)}
           >
+            {questions.map((item) => (
+              <View key={item.id} style={{ flex: 1 }}>
+                {item.component}
+              </View>
+            ))}
+          </PagerView>
+          <TouchableOpacity onPress={nextScreen} style={styles.generateButton}>
             <View style={styles.buttonContent}>
               <Text style={styles.buttontitle}>
                 {currentIndex === questions.length - 1 ? "Finish" : "Next"}
@@ -488,13 +471,9 @@ const styles = StyleSheet.create({
     height: 100,
   },
   loadingText: {
-    color: "#FFA500",
-    fontSize: 16,
-    fontWeight: "300",
+    fontSize: 14,
+    color: "#B2B2B2",
     textAlign: "center",
-    marginTop: 20,
-    alignSelf: "center",
-    justifyContent: "center",
   },
   errorContainer: {
     display: "flex",

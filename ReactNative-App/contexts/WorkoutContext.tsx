@@ -15,25 +15,51 @@ interface WorkoutContextType {
 
 const WorkoutContext = createContext<WorkoutContextType | undefined>(undefined);
 
+export const SaveCompletedWorkout = async (plan: WorkoutPlan) => {
+  try {
+    const completedWorkoutsString = await AsyncStorage.getItem(
+      "CompletedWorkouts"
+    );
+    let completedWorkouts: WorkoutPlan[] = [];
+    if (completedWorkoutsString) {
+      completedWorkouts = JSON.parse(completedWorkoutsString);
+      if (!Array.isArray(completedWorkouts)) {
+        completedWorkouts = [completedWorkouts];
+      }
+    }
+    completedWorkouts.push({
+      ...plan,
+    });
+    await AsyncStorage.setItem(
+      "CompletedWorkouts",
+      JSON.stringify(
+        completedWorkouts.map((p, idx) =>
+          idx === completedWorkouts.length - 1
+            ? { ...p, completedAt: new Date().toISOString() }
+            : p
+        )
+      )
+    );
+    await AsyncStorage.setItem(
+      "CompletedWorkouts",
+      JSON.stringify(completedWorkouts)
+    );
+  } catch (error) {
+    console.error("Error saving completed workout:", error);
+    throw error;
+  }
+};
 export const SaveWorkout = async (plan: WorkoutPlan) => {
   try {
-    // Get existing workouts
     const savedWorkoutsString = await AsyncStorage.getItem("SavedWorkouts");
     let savedWorkouts: WorkoutPlan[] = [];
-
     if (savedWorkoutsString) {
-      // Parse existing workouts if any
       savedWorkouts = JSON.parse(savedWorkoutsString);
-      // Ensure it's an array
       if (!Array.isArray(savedWorkouts)) {
         savedWorkouts = [savedWorkouts];
       }
     }
-
-    // Add new workout to array
     savedWorkouts.push(plan);
-
-    // Save updated array back to storage
     await AsyncStorage.setItem("SavedWorkouts", JSON.stringify(savedWorkouts));
     console.log("Workout saved successfully");
   } catch (error) {
@@ -51,8 +77,8 @@ export const WorkoutProvider = ({ children }: { children: ReactNode }) => {
     equipment: "",
     focus: "",
     workoutGenerated: false,
+    currentWorkoutPlan: null,
   });
-  console.log("Workout Data:", workoutData);
 
   // Load saved workout data on mount
   useEffect(() => {

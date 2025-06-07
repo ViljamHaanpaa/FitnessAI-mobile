@@ -6,7 +6,7 @@ import { IconSymbol } from "@/components/ui/IconSymbol";
 import TabBarBackground from "@/components/ui/TabBarBackground";
 import { Colors } from "@/constants/Colors";
 import { useColorScheme } from "@/hooks/useColorScheme";
-import { router } from "expo-router";
+import { router, usePathname } from "expo-router";
 import { useWorkout } from "../../contexts/WorkoutContext";
 import Animated, {
   useSharedValue,
@@ -20,6 +20,7 @@ export default function TabLayout() {
   const colorScheme = useColorScheme();
   const [playPressedOnce, setPlayPressedOnce] = useState(false);
   const shadowRadius = useSharedValue(20);
+  const pathname = usePathname();
   const animatedShadowStyle = useAnimatedStyle(() => ({
     shadowRadius: shadowRadius.value,
   }));
@@ -37,15 +38,11 @@ export default function TabLayout() {
   }, []);
   const handlePlayPress = () => {
     if (workoutData.workoutGenerated) {
-      if (playPressedOnce) {
-        router.push({
-          pathname: "/WorkoutSessionScreen",
-        });
+      if (pathname === "/") {
+        // If already on index, go straight to WorkoutSessionScreen
+        router.push("/WorkoutSessionScreen");
       } else {
-        setPlayPressedOnce(true);
-        router.push({
-          pathname: "/",
-        });
+        router.push("/");
       }
     }
   };

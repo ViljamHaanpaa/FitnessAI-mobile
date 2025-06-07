@@ -55,6 +55,7 @@ export interface Exercise {
   rest: string;
   duration: string;
   description: string;
+  type: string;
 }
 
 export interface WorkoutPlan {

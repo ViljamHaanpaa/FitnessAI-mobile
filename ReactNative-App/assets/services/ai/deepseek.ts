@@ -34,13 +34,45 @@ export const generateWorkoutPlan = async (workoutData: WorkoutData) => {
                   type: "object",
                   properties: {
                     name: { type: "string" },
+                    type: {
+                      type: "string",
+                      description: "Exercise type: 'time' or 'reps'",
+                    },
                     duration: {
                       type: "string",
                       description: "Duration in seconds (e.g. '120')",
                     },
                     description: { type: "string" },
+                    instructions: {
+                      type: "object",
+                      description:
+                        "Step-by-step instructions for the exercise. Each key is step1, step2, etc.",
+                      properties: {
+                        step1: {
+                          type: "string",
+                          description: "Short, clear instruction for step 1",
+                        },
+                        step2: {
+                          type: "string",
+                          description: "Short, clear instruction for step 2",
+                        },
+                      },
+                      additionalProperties: true,
+                    },
+                    wikihow: {
+                      type: "string",
+                      description:
+                        "WikiHow link for the exercise, if available",
+                    },
                   },
-                  required: ["name", "duration", "description"],
+                  required: [
+                    "name",
+                    "type",
+                    "duration",
+                    "description",
+                    "instructions",
+                    "wikihow",
+                  ],
                 },
               },
             },
@@ -59,12 +91,51 @@ export const generateWorkoutPlan = async (workoutData: WorkoutData) => {
                   type: "object",
                   properties: {
                     name: { type: "string" },
+                    type: {
+                      type: "string",
+                      description: "Exercise type: 'time' or 'reps'",
+                    },
                     sets: { type: "number" },
                     reps: { type: "string" },
                     rest: { type: "string" },
+                    duration: {
+                      type: "string",
+                      description:
+                        "Duration in seconds (for time-based exercises)",
+                    },
                     description: { type: "string" },
+                    instructions: {
+                      type: "object",
+                      description:
+                        "Step-by-step instructions for the exercise. Each key is step1, step2, etc.",
+                      properties: {
+                        step1: {
+                          type: "string",
+                          description: "Short, clear instruction for step 1",
+                        },
+                        step2: {
+                          type: "string",
+                          description: "Short, clear instruction for step 2",
+                        },
+                      },
+                      additionalProperties: true,
+                    },
+                    wikihow: {
+                      type: "string",
+                      description:
+                        "WikiHow link for the exercise, if available",
+                    },
                   },
-                  required: ["name", "sets", "reps", "rest", "description"],
+                  required: [
+                    "name",
+                    "type",
+                    "sets",
+                    "reps",
+                    "rest",
+                    "description",
+                    "instructions",
+                    "wikihow",
+                  ],
                 },
               },
             },
@@ -83,13 +154,44 @@ export const generateWorkoutPlan = async (workoutData: WorkoutData) => {
                   type: "object",
                   properties: {
                     name: { type: "string" },
+                    type: {
+                      type: "string",
+                      description: "Exercise type: 'time' or 'reps'",
+                    },
                     duration: {
                       type: "string",
                       description: "Duration in seconds (e.g. '120')",
                     },
                     description: { type: "string" },
+                    instructions: {
+                      type: "object",
+                      description:
+                        "Step-by-step instructions for the exercise. Each key is step1, step2, etc.",
+                      properties: {
+                        step1: {
+                          type: "string",
+                          description: "Short, clear instruction for step 1",
+                        },
+                        step2: {
+                          type: "string",
+                          description: "Short, clear instruction for step 2",
+                        },
+                      },
+                      additionalProperties: true,
+                    },
+                    wikihow: {
+                      type: "string",
+                      description: "WikiHow link for the stretch, if available",
+                    },
                   },
-                  required: ["name", "duration", "description"],
+                  required: [
+                    "name",
+                    "type",
+                    "duration",
+                    "description",
+                    "instructions",
+                    "wikihow",
+                  ],
                 },
               },
             },
@@ -135,9 +237,12 @@ export const generateWorkoutPlan = async (workoutData: WorkoutData) => {
             - Duration: ${workoutData.duration || "45"} minutes
             - Session Type: Progressive workout targeting ${workoutData.goal}
             - Timestamp: ${new Date().toISOString()}
-            
+
             IMPORTANT: All durations must be given as a string representing the number of seconds (e.g. "120"), NOT as text like "2 minutes".
-            
+
+            For each exercise, include:
+            - a short, clear instruction string (e.g. "Stand shoulder-width apart. Hinge at the hips, back straight. Hold dumbbells with palms in. Pull elbows back, squeeze shoulder blades.")
+
             Please structure the workout with proper warm-up, main exercises, and cool-down sections.`,
         },
       ],
