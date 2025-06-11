@@ -4,6 +4,8 @@ import { WorkoutPlan } from "@/types/workout";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useFocusEffect } from "@react-navigation/native";
 import { CollapsibleWorkout } from "@/components/CollapsibleWorkout";
+import colors from "@/styles/colors";
+
 export default function SavedWorkouts() {
   const [savedWorkouts, setSavedWorkouts] = useState<WorkoutPlan[]>([]);
 
@@ -60,7 +62,7 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
-    backgroundColor: "#1A1C20",
+    backgroundColor: colors.background,
     marginBottom: 50,
   },
   listContainer: {

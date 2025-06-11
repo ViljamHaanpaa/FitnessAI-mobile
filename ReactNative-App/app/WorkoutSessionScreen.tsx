@@ -8,13 +8,26 @@ import { PaginationHeader } from "@/components/ui/paginationHeader";
 import { TimeExerciseCard } from "@/components/workoutCards/TimeExerciseCard";
 import { RepsExerciseCard } from "@/components/workoutCards/RepsExerciseCard";
 import { InstructionsModal } from "@/components/ui/instructionsModal";
+import colors from "@/styles/colors";
+
 export default function WorkoutSessionScreen() {
   const [currentPage, setCurrentPage] = useState(0);
   const pagerRef = useRef<PagerView>(null);
-  const { workoutData } = useWorkout();
+  const {
+    workoutData,
+    updateWorkoutData,
+    completedExercises,
+    resetCompletedExercises,
+  } = useWorkout();
   const router = useRouter();
   const [instructionsVisible, setInstructionsVisible] = useState(false);
   const [instructionsExercise, setInstructionsExercise] = useState<any>(null);
+
+  useEffect(() => {
+    if (!workoutData.workoutActive) {
+      updateWorkoutData({ workoutActive: true });
+    }
+  }, []);
   const warmupExercises =
     workoutData?.currentWorkoutPlan?.warmup?.exercises || [];
   const mainExercises =
@@ -41,7 +54,10 @@ export default function WorkoutSessionScreen() {
       handlePageChange(currentPage + 1);
     }
   };
+  // Track completed exercises in state as an object with exercise names as keys
+
   const handleFinishWorkout = () => {
+    console.log(completedExercises);
     Alert.alert(
       "Finish Workout",
       "Are you sure you want to finish this workout?",
@@ -52,9 +68,16 @@ export default function WorkoutSessionScreen() {
         },
         {
           text: "Finish",
-          onPress: () => {
+          onPress: async () => {
             if (workoutData.currentWorkoutPlan) {
-              SaveCompletedWorkout(workoutData.currentWorkoutPlan);
+              updateWorkoutData({
+                workoutActive: false,
+              });
+              await SaveCompletedWorkout({
+                ...workoutData.currentWorkoutPlan,
+                completedExercises,
+              });
+              resetCompletedExercises();
             }
             router.push("/(tabs)");
           },
@@ -70,13 +93,7 @@ export default function WorkoutSessionScreen() {
   };
 
   return (
-    <View style={{ flex: 1 }}>
-      <Image
-        source={require("../assets/images/background1.png")}
-        style={styles.backgroundImage}
-        blurRadius={15}
-      />
-
+    <View style={{ flex: 1, backgroundColor: colors.background }}>
       <View style={styles.overlay} />
       <View style={styles.paginationHeaderContainer}>
         <PaginationHeader

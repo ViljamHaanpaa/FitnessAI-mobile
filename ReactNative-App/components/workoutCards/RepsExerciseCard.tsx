@@ -1,8 +1,14 @@
-import React, { useState, useEffect } from "react";
-import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
+import React, { useState, useEffect, use } from "react";
+import { View, Text, TouchableOpacity, StyleSheet, Alert } from "react-native";
 import { AnimatedCircularProgress } from "react-native-circular-progress";
 import Icon from "@expo/vector-icons/FontAwesome";
-
+import { useWorkout } from "@/contexts/WorkoutContext";
+import colors from "../../styles/colors";
+import Animated, {
+  useSharedValue,
+  useAnimatedStyle,
+  withTiming,
+} from "react-native-reanimated";
 export const RepsExerciseCard = ({
   exercise,
   onComplete,
@@ -13,12 +19,26 @@ export const RepsExerciseCard = ({
   const [phase, setPhase] = useState<
     "start" | "inProgress" | "rest" | "completed"
   >("start");
+  const MIN_DURATION_BEFORE_READY = 10000;
   const [isResting, setIsResting] = useState(false);
   const [restTime, setRestTime] = useState(Number(exercise.rest));
   const [restStart, setRestStart] = useState<number | null>(null);
   const [setsCompleted, setSetsCompleted] = useState(0);
+  const [startTime, setStartTime] = useState<number | null>(null);
+  const [buttonAnimStarted, setButtonAnimStarted] = useState(false);
+  const buttonColor = useSharedValue(colors.secondary);
+  const { markExerciseCompleted, completedExercises } = useWorkout();
+  const [markedCompleted, setMarkedCompleted] = useState(false);
+  const animatedButtonStyle = useAnimatedStyle(() => ({
+    backgroundColor: buttonColor.value,
+  }));
 
-  // Handle rest timer
+  useEffect(() => {
+    const isCompleted = !!completedExercises[exercise.name];
+    if (isCompleted) setPhase("completed");
+    else setPhase("start");
+  }, [completedExercises, exercise.name]);
+
   useEffect(() => {
     let interval: ReturnType<typeof setInterval>;
     if (phase === "rest" && isResting && restStart !== null) {
@@ -48,13 +68,65 @@ export const RepsExerciseCard = ({
     exercise.sets,
   ]);
 
-  const handleStart = () => setPhase("inProgress");
+  const handleStart = () => {
+    const now = Date.now();
+    setStartTime(now);
+    setPhase("inProgress");
+    buttonColor.value = withTiming(colors.primary, {
+      duration: MIN_DURATION_BEFORE_READY,
+    });
+  };
+  useEffect(() => {
+    if (phase !== "inProgress") {
+      buttonColor.value = colors.secondary;
+      setButtonAnimStarted(false);
+    }
+  }, [phase]);
+
+  useEffect(() => {
+    if (phase === "completed" && !markedCompleted) {
+      markExerciseCompleted(exercise.name, true);
+      setMarkedCompleted(true);
+    }
+    if (phase !== "completed" && markedCompleted) {
+      setMarkedCompleted(false);
+    }
+  }, [phase, exercise.name, markExerciseCompleted, markedCompleted]);
 
   const handleReady = () => {
+    if (!startTime) {
+      return;
+    }
+    if (Date.now() - startTime < MIN_DURATION_BEFORE_READY) {
+      Alert.alert(
+        "Are you really that quick?",
+        "",
+        [
+          {
+            text: "No",
+            style: "cancel",
+          },
+          {
+            text: "Yes",
+            onPress: () => {
+              if (setsCompleted + 1 < exercise.sets) {
+                setPhase("rest");
+              } else {
+                setSetsCompleted((prev) => prev + 1);
+                setPhase("completed");
+              }
+            },
+          },
+        ],
+        { cancelable: true }
+      );
+      return;
+    }
     if (setsCompleted + 1 < exercise.sets) {
       setPhase("rest");
     } else {
       setSetsCompleted((prev) => prev + 1);
+
       setPhase("completed");
     }
   };
@@ -67,7 +139,6 @@ export const RepsExerciseCard = ({
 
   useEffect(() => {
     if (phase === "rest") handleRestStart();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [phase]);
 
   const handleSkipRest = () => {
@@ -102,8 +173,8 @@ export const RepsExerciseCard = ({
               ? (restTime / Number(exercise.rest)) * 100
               : 100
           }
-          tintColor="#00FF66"
-          backgroundColor="#333"
+          tintColor={colors.greenPrimary}
+          backgroundColor={colors.secondary}
           rotation={220}
           arcSweepAngle={280}
           lineCap="round"
@@ -120,7 +191,9 @@ export const RepsExerciseCard = ({
                   </Text>
                 </>
               ) : phase === "start" ? (
-                <Text style={styles.goText}>Ready?</Text>
+                <Text style={[styles.goText, { color: colors.primary }]}>
+                  Ready?
+                </Text>
               ) : phase === "inProgress" ? (
                 <Text style={styles.goText}>Go!</Text>
               ) : phase === "completed" ? (
@@ -148,7 +221,7 @@ export const RepsExerciseCard = ({
       >
         {phase === "start" && (
           <TouchableOpacity
-            style={[styles.doneButton, { backgroundColor: "#00FF66" }]}
+            style={[styles.doneButton, { backgroundColor: colors.primary }]}
             onPress={handleStart}
           >
             <Text style={styles.doneButtonText}>Start</Text>
@@ -162,23 +235,31 @@ export const RepsExerciseCard = ({
         )}
 
         {phase === "inProgress" && (
-          <TouchableOpacity
-            style={[styles.doneButton, { backgroundColor: "#343535" }]}
-            onPress={handleReady}
-          >
-            <Text style={styles.doneButtonText}>Done</Text>
-            <Icon
-              name="check"
-              size={18}
-              color="#fff"
-              style={{ marginLeft: 6 }}
-            />
-          </TouchableOpacity>
+          <Animated.View style={[styles.doneButton, animatedButtonStyle]}>
+            <TouchableOpacity
+              style={{
+                flex: 1,
+                flexDirection: "row",
+                alignItems: "center",
+                justifyContent: "space-between",
+              }}
+              onPress={handleReady}
+              activeOpacity={0.8}
+            >
+              <Text style={styles.doneButtonText}>Done?</Text>
+              <Icon
+                name="check"
+                size={18}
+                color="#fff"
+                style={{ marginLeft: 6 }}
+              />
+            </TouchableOpacity>
+          </Animated.View>
         )}
 
         {phase === "rest" && isResting && (
           <TouchableOpacity
-            style={[styles.doneButton, { backgroundColor: "#343535" }]}
+            style={[styles.doneButton, { backgroundColor: colors.secondary }]}
             onPress={handleSkipRest}
           >
             <Text style={[styles.doneButtonText]}>Skip Rest</Text>
@@ -192,7 +273,10 @@ export const RepsExerciseCard = ({
         )}
         {phase === "completed" && (
           <TouchableOpacity
-            style={[styles.doneButton, { backgroundColor: "#2F80ED" }]}
+            style={[
+              styles.doneButton,
+              { backgroundColor: colors.greenPrimary },
+            ]}
             onPress={onComplete}
           >
             <Text style={styles.doneButtonText}>Next</Text>
@@ -213,7 +297,7 @@ const styles = StyleSheet.create({
   pageContainer: { alignItems: "center", flex: 1 },
   exerciseTitle: {
     fontSize: 24,
-    color: "#aaa",
+    color: colors.textPrimary,
     marginBottom: 10,
   },
   exerciseSubtitle: {
@@ -258,7 +342,7 @@ const styles = StyleSheet.create({
     borderCurve: "continuous",
   },
   doneButtonText: {
-    color: "#FFFFFF",
+    color: colors.textPrimary,
     fontSize: 18,
     fontWeight: 600,
     textAlign: "left",

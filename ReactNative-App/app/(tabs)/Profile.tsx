@@ -12,6 +12,8 @@ import { useWorkout } from "@/contexts/WorkoutContext";
 import { WORKOUT_FOCUS_OPTIONS_SPORTS } from "../../assets/data/workouts/focusOptions";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { navigateToGoalSelection } from "@/utils/navigationHelpers";
+import colors from "@/styles/colors";
+
 export default function Profile() {
   const { workoutData } = useWorkout();
   const screenWidth = Dimensions.get("window").width;
@@ -28,10 +30,6 @@ export default function Profile() {
   const focusImage = getFocusImage();
   return (
     <SafeAreaView style={styles.container}>
-      <Image
-        source={require("../../assets/images/background2.png")}
-        style={styles.backgroundImage}
-      />
       <View style={styles.overlay}>
         <Text style={styles.title}>Trainee{"\n"} Overview</Text>
         <Text style={styles.caption}>3 Months and Counting</Text>
@@ -90,7 +88,7 @@ export default function Profile() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1 },
+  container: { flex: 1, backgroundColor: colors.background },
   backgroundImage: {
     width: "100%",
     height: "110%",
@@ -127,7 +125,7 @@ const styles = StyleSheet.create({
     gap: 5,
   },
   box: {
-    backgroundColor: "#101213",
+    backgroundColor: colors.secondary,
     width: 170,
     height: 170,
     borderRadius: 15,
@@ -161,7 +159,7 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
   goalText: {
-    color: "orange",
+    color: colors.textHighlight,
     fontSize: 20,
     fontWeight: "600",
     textAlign: "center",
@@ -169,7 +167,7 @@ const styles = StyleSheet.create({
     left: 5,
   },
   chartBox: {
-    backgroundColor: "#101213",
+    backgroundColor: colors.secondary,
     height: 170,
     borderRadius: 15,
     alignItems: "center",

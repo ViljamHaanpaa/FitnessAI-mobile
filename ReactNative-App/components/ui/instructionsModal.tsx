@@ -11,6 +11,7 @@ import BottomSheet, {
   BottomSheetView,
   BottomSheetBackdrop,
 } from "@gorhom/bottom-sheet";
+import colors from "../../styles/colors";
 
 interface InstructionsModalProps {
   exercise: any | null;
@@ -44,7 +45,7 @@ export const InstructionsModal: React.FC<InstructionsModalProps> = ({
         backgroundStyle={{
           borderTopLeftRadius: 24,
           borderTopRightRadius: 24,
-          backgroundColor: "#101213",
+          backgroundColor: colors.background,
         }}
         backdropComponent={(props) => (
           <BottomSheetBackdrop
@@ -123,14 +124,14 @@ const styles = StyleSheet.create({
     width: 20,
     height: 20,
     borderRadius: 15,
-    backgroundColor: "#007AFF",
+    backgroundColor: colors.primary,
     justifyContent: "center",
     alignItems: "center",
     marginRight: 10,
     alignSelf: "flex-start",
   },
   stepNumber: {
-    color: "#101213",
+    color: colors.secondary,
     fontWeight: "bold",
   },
   closeButton: {
@@ -139,7 +140,7 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     borderCurve: "continuous",
     alignItems: "center",
-    backgroundColor: "#333",
+    backgroundColor: colors.secondary,
     justifyContent: "center",
     alignSelf: "center",
   },

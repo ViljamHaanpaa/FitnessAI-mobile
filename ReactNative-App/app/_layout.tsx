@@ -12,7 +12,6 @@ import "react-native-reanimated";
 import { WorkoutProvider } from "@/contexts/WorkoutContext";
 import { useColorScheme } from "@/hooks/useColorScheme";
 
-// Prevent splash screen from auto-hiding
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
@@ -21,21 +20,28 @@ export default function RootLayout() {
     SpaceMono: require("../assets/fonts/SpaceMono-Regular.ttf"),
   });
 
+  // reset AsyncStorage for development purposes
+  // useEffect(() => {
+  //   const resetAsyncStorage = async () => {
+  //     await AsyncStorage.clear();
+  //   };
+  //   resetAsyncStorage();
+  // }, []);
+
   useEffect(() => {
     if (loaded) {
       SplashScreen.hideAsync();
     }
   }, [loaded]);
-
   if (!loaded) {
     return null;
   }
+
   return (
     <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
       <WorkoutProvider>
         <Slot />
       </WorkoutProvider>
-
       <StatusBar style={colorScheme === "dark" ? "light" : "dark"} />
     </ThemeProvider>
   );

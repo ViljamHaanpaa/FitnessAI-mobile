@@ -3,7 +3,7 @@ import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import { WorkoutPlan } from "@/types/workout";
 import Icon from "@expo/vector-icons/FontAwesome";
 import { WorkoutPlanDisplay } from "@/components/WorkoutPlanDisplaySaved";
-
+import colors from "@/styles/colors";
 interface CollapsibleWorkoutProps {
   workout: WorkoutPlan;
 }
@@ -54,7 +54,7 @@ export const CollapsibleWorkout = ({ workout }: CollapsibleWorkoutProps) => {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: "#101213",
+    backgroundColor: colors.secondary,
     padding: 16,
     borderRadius: 12,
     marginBottom: 16,

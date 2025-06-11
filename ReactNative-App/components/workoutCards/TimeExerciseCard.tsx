@@ -1,7 +1,9 @@
-import React, { useEffect, useRef, useState } from "react";
-import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
+import React, { useEffect, useState } from "react";
+import { View, Text, TouchableOpacity, StyleSheet, Alert } from "react-native";
 import { AnimatedCircularProgress } from "react-native-circular-progress";
 import Icon from "@expo/vector-icons/FontAwesome";
+import colors from "../../styles/colors";
+import { useWorkout } from "@/contexts/WorkoutContext";
 
 export const TimeExerciseCard = ({
   exercise,
@@ -18,20 +20,27 @@ export const TimeExerciseCard = ({
   const [remainingTime, setRemainingTime] = useState(
     Number(exercise.duration) || 0
   );
-  const [paused, setPaused] = useState(true);
   const [isTimerCompleted, setIsTimerCompleted] = useState(false);
-
-  // Reset timer when exercise changes
+  const { markExerciseCompleted, completedExercises } = useWorkout();
+  const [hasStarted, setHasStarted] = useState(false);
   useEffect(() => {
     setRemainingTime(Number(exercise.duration) || 0);
     setProgress(0);
     setIsTimerCompleted(false);
-    setPaused(true);
   }, [exercise]);
+  // Set completed state from context
+  useEffect(() => {
+    const isCompleted = !!completedExercises[exercise.name];
+    setIsTimerCompleted(isCompleted);
+    if (isCompleted) {
+      setProgress(100);
+      setRemainingTime(0);
+    }
+  }, [completedExercises, exercise.name]);
 
   // Timer effect
   useEffect(() => {
-    if (paused || isTimerCompleted) return;
+    if (isTimerCompleted || !hasStarted) return;
 
     const duration = Number(exercise.duration) || 1;
     const start = Date.now() - (duration - remainingTime) * 1000;
@@ -47,7 +56,9 @@ export const TimeExerciseCard = ({
       if (percent >= 100) {
         clearInterval(interval);
         setIsTimerCompleted(true);
-        setPaused(true);
+        setProgress(100);
+        setRemainingTime(0);
+        markExerciseCompleted(exercise.name, true);
         if (isLastExercise && onFinishWorkout) {
           onFinishWorkout();
         } else if (onComplete) {
@@ -57,22 +68,45 @@ export const TimeExerciseCard = ({
     }, 100);
 
     return () => clearInterval(interval);
-  }, [paused, isTimerCompleted, exercise, remainingTime]);
+  }, [isTimerCompleted, hasStarted, exercise, remainingTime]);
 
   const handlePress = () => {
+    if (!hasStarted) {
+      setHasStarted(true);
+      return;
+    }
     if (isTimerCompleted) {
       if (isLastExercise && onFinishWorkout) {
         onFinishWorkout();
       } else if (onComplete) {
         onComplete();
       }
-    } else if (paused) {
-      setPaused(false);
     } else {
-      setRemainingTime(0);
-      setProgress(100);
-      setIsTimerCompleted(true);
-      setPaused(true);
+      Alert.alert(
+        "Skip Exercise",
+        "Are you sure you want to skip this exercise?",
+        [
+          {
+            text: "Cancel",
+            style: "cancel",
+          },
+          {
+            text: "Skip",
+            onPress: () => {
+              setRemainingTime(0);
+              setProgress(100);
+              setIsTimerCompleted(true);
+              markExerciseCompleted(exercise.name, true);
+              if (isLastExercise && onFinishWorkout) {
+                onFinishWorkout();
+              } else if (onComplete) {
+                onComplete();
+              }
+            },
+          },
+        ],
+        { cancelable: true }
+      );
     }
   };
 
@@ -88,8 +122,8 @@ export const TimeExerciseCard = ({
           size={280}
           width={15}
           fill={progress}
-          tintColor="#00FF66"
-          backgroundColor="#333"
+          tintColor={colors.greenPrimary}
+          backgroundColor={colors.secondary}
           rotation={220}
           arcSweepAngle={280}
           lineCap="round"
@@ -118,35 +152,23 @@ export const TimeExerciseCard = ({
             styles.skipButton,
             {
               backgroundColor: isTimerCompleted
-                ? "#00FF66"
-                : paused
-                ? "#00FF66"
-                : "#333",
+                ? colors.greenPrimary
+                : colors.primary,
               marginLeft: 10,
             },
           ]}
           onPress={handlePress}
         >
-          {isTimerCompleted ? (
-            <Text style={styles.buttonText}>
-              {isLastExercise ? "Finish!" : "Next"}
-            </Text>
-          ) : paused ? (
-            <Text style={styles.buttonText}>Start</Text>
-          ) : (
-            <Text style={styles.buttonText}>Skip</Text>
-          )}
-          <Icon
-            name={
-              isTimerCompleted
-                ? "step-forward"
-                : paused
-                ? "play"
-                : "step-forward"
-            }
-            size={16}
-            color="#FFFFFF"
-          />
+          <Text style={styles.buttonText}>
+            {!hasStarted
+              ? "Start"
+              : isTimerCompleted
+              ? isLastExercise
+                ? "Finish!"
+                : "Next"
+              : "Skip"}
+          </Text>
+          <Icon name="step-forward" size={16} color="#FFFFFF" />
         </TouchableOpacity>
       </View>
     </View>
@@ -181,7 +203,7 @@ const styles = StyleSheet.create({
   buttonText: {
     color: "#FFFFFF",
     fontSize: 18,
-    fontWeight: 600,
+    fontWeight: "600",
     textAlign: "left",
     paddingLeft: 20,
   },
@@ -194,16 +216,5 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-between",
     paddingHorizontal: 20,
-  },
-  pauseButton: {
-    flexDirection: "row",
-    backgroundColor: "#333",
-    borderRadius: 20,
-    width: 150,
-    marginHorizontal: 10,
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-    alignItems: "center",
-    justifyContent: "center",
   },
 });

@@ -1,19 +1,21 @@
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
-import { SaveWorkout } from "@/contexts/WorkoutContext";
-import Icon from "@expo/vector-icons/FontAwesome";
 import { WorkoutPlan } from "@/types/workout";
-
+import colors from "@/styles/colors";
 export const WorkoutPlanDisplay = ({ plan }: { plan: WorkoutPlan | null }) => {
   if (!plan) return null;
 
   return (
     <View style={styles.container}>
       <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Warmup ({plan.warmup.duration})</Text>
+        <Text style={styles.sectionTitle}>
+          Warmup ({Math.round(Number(plan.warmup.duration) / 60)} min)
+        </Text>
         {plan.warmup.exercises.map((exercise, index) => (
           <View key={index} style={styles.exercise}>
             <Text style={styles.exerciseName}>{exercise.name}</Text>
-            <Text style={styles.exerciseDuration}>{exercise.duration}</Text>
+            <Text style={styles.exerciseDuration}>
+              {Math.round(Number(exercise.duration) / 60)} min
+            </Text>
             <Text style={styles.exerciseDescription}>
               {exercise.description}
             </Text>
@@ -23,14 +25,15 @@ export const WorkoutPlanDisplay = ({ plan }: { plan: WorkoutPlan | null }) => {
 
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>
-          Main Workout ({plan.mainWorkout.duration})
+          Main Workout ({Math.round(Number(plan.mainWorkout.duration) / 60)}{" "}
+          min)
         </Text>
         {plan.mainWorkout.exercises.map((exercise, index) => (
           <View key={index} style={styles.exercise}>
             <Text style={styles.exerciseName}>{exercise.name}</Text>
             <Text style={styles.exerciseDuration}>
               Sets: {exercise.sets} | Reps: {exercise.reps} | Rest:{" "}
-              {exercise.rest}
+              {Math.round(Number(exercise.rest) / 60)} min
             </Text>
             <Text style={styles.exerciseDescription}>
               {exercise.description}
@@ -41,12 +44,14 @@ export const WorkoutPlanDisplay = ({ plan }: { plan: WorkoutPlan | null }) => {
 
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>
-          Cooldown ({plan.cooldown.duration})
+          Cooldown ({Math.round(Number(plan.cooldown.duration) / 60)} min)
         </Text>
         {plan.cooldown.stretches.map((stretch, index) => (
           <View key={index} style={styles.exercise}>
             <Text style={styles.exerciseName}>{stretch.name}</Text>
-            <Text style={styles.exerciseDuration}>{stretch.duration}</Text>
+            <Text style={styles.exerciseDuration}>
+              {Math.round(Number(stretch.duration) / 60)} min
+            </Text>
             <Text style={styles.exerciseDescription}>
               {stretch.description}
             </Text>
@@ -80,7 +85,7 @@ const styles = StyleSheet.create({
   },
   exercise: {
     padding: 12,
-    backgroundColor: "#1A1C20",
+    backgroundColor: colors.tertiary,
     gap: 4,
     borderRadius: 20,
     borderCurve: "continuous",

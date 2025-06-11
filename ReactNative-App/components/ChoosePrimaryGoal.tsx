@@ -8,6 +8,7 @@ import Animated, {
 } from "react-native-reanimated";
 import Icon from "@expo/vector-icons/FontAwesome";
 import { WORKOUT_GOALS, WORKOUT_GOALS_SPORTS } from "@/types/workout";
+import colors from "../styles/colors";
 
 export const ChoosePrimaryGoal = () => {
   const { workoutData, updateWorkoutData } = useWorkout();
@@ -88,7 +89,7 @@ export const ChoosePrimaryGoal = () => {
                 styles.goalButton,
                 {
                   backgroundColor:
-                    selectedGoal === goal ? "#FFA31A" : "#1E2022",
+                    selectedGoal === goal ? colors.primary : colors.secondary,
                 },
               ]}
               onPress={() => handleGoalButtonPress(goal)}
@@ -122,7 +123,7 @@ export const ChoosePrimaryGoal = () => {
                 styles.goalButton,
                 {
                   backgroundColor:
-                    selectedGoal === goal ? "#FFA31A" : "#1E2022",
+                    selectedGoal === goal ? colors.primary : colors.secondary,
                 },
               ]}
               onPress={() => handleGoalButtonPress(goal)}
@@ -140,7 +141,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "#101213",
+    backgroundColor: colors.secondary,
   },
   flatListContainer: {
     justifyContent: "center",
@@ -173,7 +174,7 @@ const styles = StyleSheet.create({
   },
   currentValue: {
     fontSize: 15,
-    color: "#FFA31A",
+    color: colors.primary,
     fontWeight: "600",
   },
   goalsContainer: {
@@ -233,7 +234,7 @@ const styles = StyleSheet.create({
     resizeMode: "cover",
   },
   button: {
-    backgroundColor: "#FFA31A",
+    backgroundColor: colors.primary,
     width: 320,
     height: 75,
     bottom: 60,
@@ -241,7 +242,7 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     borderCurve: "continuous",
     justifyContent: "center",
-    shadowColor: "#FFA31A",
+    shadowColor: colors.primary,
     shadowOpacity: 0.4,
     shadowRadius: 12,
     elevation: 5,

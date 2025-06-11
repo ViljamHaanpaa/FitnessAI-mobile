@@ -1,13 +1,12 @@
 import { Tabs } from "expo-router";
-import React, { useState } from "react";
-import { Platform, TouchableOpacity } from "react-native";
+import React, { useEffect } from "react";
+import { Platform, TouchableOpacity, Alert } from "react-native";
 import { HapticTab } from "@/components/HapticTab";
 import { IconSymbol } from "@/components/ui/IconSymbol";
-import TabBarBackground from "@/components/ui/TabBarBackground";
-import { Colors } from "@/constants/Colors";
-import { useColorScheme } from "@/hooks/useColorScheme";
 import { router, usePathname } from "expo-router";
 import { useWorkout } from "../../contexts/WorkoutContext";
+import colors from "../../styles/colors";
+import { StartWorkoutAlert } from "@/components/alerts/GlobalAlerts";
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
@@ -17,13 +16,16 @@ import Animated, {
 } from "react-native-reanimated";
 export default function TabLayout() {
   const { workoutData } = useWorkout();
-  const colorScheme = useColorScheme();
-  const [playPressedOnce, setPlayPressedOnce] = useState(false);
   const shadowRadius = useSharedValue(20);
   const pathname = usePathname();
   const animatedShadowStyle = useAnimatedStyle(() => ({
     shadowRadius: shadowRadius.value,
   }));
+  useEffect(() => {
+    if (workoutData.workoutActive && pathname !== "/WorkoutSessionScreen") {
+      router.push("/WorkoutSessionScreen");
+    }
+  }, [workoutData.workoutActive, pathname]);
 
   // 3. Start breathing animation on mount
   React.useEffect(() => {
@@ -39,28 +41,29 @@ export default function TabLayout() {
   const handlePlayPress = () => {
     if (workoutData.workoutGenerated) {
       if (pathname === "/") {
-        // If already on index, go straight to WorkoutSessionScreen
-        router.push("/WorkoutSessionScreen");
+        StartWorkoutAlert();
       } else {
         router.push("/");
       }
     }
   };
-
   return (
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor: Colors[colorScheme ?? "dark"].tint,
         headerShown: false,
         tabBarButton: HapticTab,
-        tabBarBackground: TabBarBackground,
         tabBarStyle: Platform.select({
           ios: {
             position: "absolute",
             height: 80,
+            backgroundColor: colors.tabBarColor,
           },
-          default: {},
+          default: {
+            backgroundColor: colors.tabBarColor,
+          },
         }),
+        tabBarActiveTintColor: colors.primary,
+        tabBarInactiveTintColor: colors.tertiary,
       }}
     >
       <Tabs.Screen

@@ -1,6 +1,7 @@
 import { Image, StyleSheet, TouchableOpacity, Text, View } from "react-native";
 import { router } from "expo-router";
 import Icon from "@expo/vector-icons/FontAwesome";
+import colors from "../styles/colors";
 export default function IntroScreen() {
   const nextScreen = () => {
     router.push("/GetStarted");
@@ -9,16 +10,16 @@ export default function IntroScreen() {
   return (
     <View style={styles.container}>
       <Image
-        source={require("../assets/images/background1.png")}
+        source={require("../assets/images/Component 21.png")}
         style={styles.backgroundImage}
       />
       <Text style={styles.title}>
-        Fitness, Just the Way <Text style={{ color: "#FFA31A" }}>You</Text> like
-        It.
+        Fitness, Just the Way <Text style={{ color: colors.primary }}>You</Text>{" "}
+        like It.
       </Text>
       <Text style={styles.titleDescription}>
         Just tell us what you need, and let AI Fitness create the perfect plan—{" "}
-        <Text style={{ color: "#FFA31A" }}>anytime, anywhere.</Text>
+        <Text style={{ color: colors.primary }}>anytime, anywhere.</Text>
       </Text>
       <TouchableOpacity style={styles.button} onPress={nextScreen}>
         <View
@@ -45,7 +46,7 @@ const styles = StyleSheet.create({
   title: {
     top: 60,
     fontSize: 40,
-    color: "#FFFFFF",
+    color: colors.textPrimary,
     marginBottom: 30,
     textAlign: "center",
     width: 300,
@@ -56,7 +57,7 @@ const styles = StyleSheet.create({
   titleDescription: {
     top: 40,
     fontSize: 18,
-    color: "#FFFFFF",
+    color: colors.textPrimary,
     marginBottom: 30,
     textAlign: "center",
     width: 290,
@@ -70,14 +71,14 @@ const styles = StyleSheet.create({
     resizeMode: "cover",
   },
   button: {
-    backgroundColor: "#FFA31A",
+    backgroundColor: colors.primary,
     width: 320,
     height: 75,
     bottom: 60,
     borderRadius: 20,
     borderCurve: "continuous",
     justifyContent: "center",
-    shadowColor: "#FFA31A",
+    shadowColor: colors.primary,
     position: "absolute",
     shadowOpacity: 0.4,
     shadowRadius: 12,

@@ -1,6 +1,6 @@
 import React from "react";
 import { View, TouchableOpacity, Text, StyleSheet } from "react-native";
-
+import colors from "@/styles/colors";
 interface PaginationHeaderProps {
   allExercises: any[];
   currentPage: number;
@@ -207,7 +207,7 @@ const styles = StyleSheet.create({
     zIndex: 10,
   },
   pageButton: {
-    backgroundColor: "#343535",
+    backgroundColor: colors.secondary,
     borderRadius: 8,
     marginHorizontal: 5,
     width: 30,
@@ -222,33 +222,30 @@ const styles = StyleSheet.create({
   },
   activePageButton: {
     fontSize: 16,
-    backgroundColor: "#007AFF",
+    backgroundColor: colors.primary,
   },
-  activeButtonText: {
-    color: "#343535",
-    fontSize: 16,
-  },
+
   pageButtonText: {
-    color: "#fff",
+    color: colors.textPrimary,
     fontSize: 16,
   },
   tipsButton: { borderRadius: 8, paddingHorizontal: 12, paddingVertical: 6 },
 
   tipsButtonText: {
-    color: "#2F80ED",
+    color: colors.primary,
     fontSize: 16,
   },
   finishPageButtonText: {
-    color: "#2F80ED",
+    color: colors.primary,
     fontSize: 16,
   },
   activePageButtonText: {
-    color: "#fff",
+    color: colors.textPrimary,
     fontSize: 16,
   },
 
   ellipsis: {
-    color: "#fff",
+    color: colors.secondary,
     fontSize: 18,
     marginHorizontal: 8,
   },

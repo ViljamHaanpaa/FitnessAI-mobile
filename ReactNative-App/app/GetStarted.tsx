@@ -12,6 +12,7 @@ import Icon from "@expo/vector-icons/FontAwesome";
 import Animated, { FadeIn } from "react-native-reanimated";
 import { ChoosePrimaryGoal } from "@/components/ChoosePrimaryGoal";
 import { useLocalSearchParams, router } from "expo-router";
+import colors from "../styles/colors";
 interface QuestionItem {
   id: string;
   component: JSX.Element;
@@ -83,7 +84,7 @@ export default function IntroScreen() {
                 style={{ width: 300, height: 40 }}
                 minimumValue={0}
                 maximumValue={10}
-                minimumTrackTintColor="#FFA31A"
+                minimumTrackTintColor={colors.primary}
                 tapToSeek={true}
                 onValueChange={handleLevelChange}
               />
@@ -101,7 +102,9 @@ export default function IntroScreen() {
                       styles.goalButton,
                       {
                         backgroundColor:
-                          selectedGender === gender ? "#FFA31A" : "#1E2022",
+                          selectedGender === gender
+                            ? colors.primary
+                            : colors.secondary,
                       },
                     ]}
                     onPress={() => handleGenderButtonPress(gender)}
@@ -130,11 +133,13 @@ export default function IntroScreen() {
       <Text style={styles.title}>
         {currentIndex === 0 ? (
           <>
-            Just a few quick <Text style={{ color: "#FFA31A" }}>questions</Text>
+            Just a few quick{" "}
+            <Text style={{ color: colors.primary }}>questions</Text>
           </>
         ) : (
           <>
-            Choose your primary <Text style={{ color: "#FFA31A" }}>goal</Text>
+            Choose your primary{" "}
+            <Text style={{ color: colors.primary }}>goal</Text>
           </>
         )}
       </Text>
@@ -168,7 +173,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "#101213",
+    backgroundColor: colors.background,
   },
   flatListContainer: {
     justifyContent: "center",
@@ -192,7 +197,7 @@ const styles = StyleSheet.create({
   },
   sliderValuesText: {
     fontSize: 15,
-    color: "#5D5F60",
+    color: colors.greyPrimary,
   },
   sliderValues: {
     flexDirection: "row",
@@ -201,7 +206,7 @@ const styles = StyleSheet.create({
   },
   currentValue: {
     fontSize: 15,
-    color: "#FFA31A",
+    color: colors.primary,
     fontWeight: "600",
   },
   goalsContainer: {
@@ -212,7 +217,7 @@ const styles = StyleSheet.create({
     alignContent: "center",
     alignItems: "center",
     justifyContent: "center",
-    overflow: "hidden", // Add this
+    overflow: "hidden",
   },
   goalButton: {
     borderRadius: 10,
@@ -220,7 +225,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   goalButtonText: {
-    color: "#FFFFFF",
+    color: colors.textPrimary,
     fontSize: 16,
     fontWeight: "500",
     textAlign: "center",
@@ -261,7 +266,7 @@ const styles = StyleSheet.create({
     resizeMode: "cover",
   },
   button: {
-    backgroundColor: "#FFA31A",
+    backgroundColor: colors.primary,
     width: 320,
     height: 75,
     bottom: 60,
@@ -269,7 +274,7 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     borderCurve: "continuous",
     justifyContent: "center",
-    shadowColor: "#FFA31A",
+    shadowColor: colors.primary,
     shadowOpacity: 0.4,
     shadowRadius: 12,
     elevation: 5,

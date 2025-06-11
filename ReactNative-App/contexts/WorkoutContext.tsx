@@ -11,16 +11,24 @@ import { WorkoutPlan, WorkoutData } from "@/types/workout";
 interface WorkoutContextType {
   workoutData: WorkoutData;
   updateWorkoutData: (data: Partial<WorkoutData>) => void;
+  completedExercises: { [exerciseName: string]: boolean };
+  markExerciseCompleted: (exerciseName: string, completed?: boolean) => void;
+  resetCompletedExercises: () => void; // <-- add this
 }
 
 const WorkoutContext = createContext<WorkoutContextType | undefined>(undefined);
 
-export const SaveCompletedWorkout = async (plan: WorkoutPlan) => {
+export const SaveCompletedWorkout = async (
+  plan: WorkoutPlan & {
+    completedExercises: { [exerciseName: string]: boolean };
+  }
+) => {
   try {
     const completedWorkoutsString = await AsyncStorage.getItem(
       "CompletedWorkouts"
     );
-    let completedWorkouts: WorkoutPlan[] = [];
+
+    let completedWorkouts: any[] = [];
     if (completedWorkoutsString) {
       completedWorkouts = JSON.parse(completedWorkoutsString);
       if (!Array.isArray(completedWorkouts)) {
@@ -29,21 +37,14 @@ export const SaveCompletedWorkout = async (plan: WorkoutPlan) => {
     }
     completedWorkouts.push({
       ...plan,
+      completedAt: new Date().toISOString(),
     });
-    await AsyncStorage.setItem(
-      "CompletedWorkouts",
-      JSON.stringify(
-        completedWorkouts.map((p, idx) =>
-          idx === completedWorkouts.length - 1
-            ? { ...p, completedAt: new Date().toISOString() }
-            : p
-        )
-      )
-    );
     await AsyncStorage.setItem(
       "CompletedWorkouts",
       JSON.stringify(completedWorkouts)
     );
+
+    console.log("Completed workout saved successfully", completedWorkouts);
   } catch (error) {
     console.error("Error saving completed workout:", error);
     throw error;
@@ -67,8 +68,12 @@ export const SaveWorkout = async (plan: WorkoutPlan) => {
     throw error;
   }
 };
-
 export const WorkoutProvider = ({ children }: { children: ReactNode }) => {
+  const [completedExercises, setCompletedExercises] = useState<{
+    [exerciseName: string]: boolean;
+  }>({});
+
+  const resetCompletedExercises = () => setCompletedExercises({});
   const [workoutData, setWorkoutData] = useState<WorkoutData>({
     gender: "",
     goal: "",
@@ -78,6 +83,7 @@ export const WorkoutProvider = ({ children }: { children: ReactNode }) => {
     focus: "",
     workoutGenerated: false,
     currentWorkoutPlan: null,
+    workoutActive: false,
   });
 
   // Load saved workout data on mount
@@ -87,6 +93,10 @@ export const WorkoutProvider = ({ children }: { children: ReactNode }) => {
         const savedData = await AsyncStorage.getItem("workoutData");
         if (savedData) {
           setWorkoutData(JSON.parse(savedData));
+        }
+        const savedCompleted = await AsyncStorage.getItem("completedExercises");
+        if (savedCompleted) {
+          setCompletedExercises(JSON.parse(savedCompleted));
         }
       } catch (error) {
         console.error("Error loading workout data:", error);
@@ -107,8 +117,28 @@ export const WorkoutProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
+  const markExerciseCompleted = (exerciseName: string, completed = true) => {
+    setCompletedExercises((prev) => ({
+      ...prev,
+      [exerciseName]: completed,
+    }));
+
+    console.log(
+      `Exercise ${exerciseName} marked as ${
+        completed ? "completed" : "not completed"
+      }`
+    );
+  };
   return (
-    <WorkoutContext.Provider value={{ workoutData, updateWorkoutData }}>
+    <WorkoutContext.Provider
+      value={{
+        workoutData,
+        updateWorkoutData,
+        completedExercises,
+        markExerciseCompleted,
+        resetCompletedExercises,
+      }}
+    >
       {children}
     </WorkoutContext.Provider>
   );

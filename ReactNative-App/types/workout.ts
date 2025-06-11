@@ -7,6 +7,7 @@ export interface WorkoutData {
   focus: string;
   workoutGenerated: boolean;
   currentWorkoutPlan: WorkoutPlan | null;
+  workoutActive: boolean;
 }
 export type WorkoutGoal =
   | "Endurance"

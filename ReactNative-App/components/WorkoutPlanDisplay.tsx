@@ -7,12 +7,12 @@ import {
   Image,
   Alert,
 } from "react-native";
-
 import Icon from "@expo/vector-icons/FontAwesome";
-
 import { WorkoutPlan, WorkoutGoalSport } from "@/types/workout";
 import { useWorkout, SaveWorkout } from "@/contexts/WorkoutContext";
 import { WORKOUT_FOCUS_OPTIONS_SPORTS } from "../assets/data/workouts/focusOptions";
+
+import colors from "@/styles/colors";
 interface WorkoutPlanDisplayProps {
   plan: WorkoutPlan | null;
   setCurrentIndex: (index: number) => void;
@@ -199,7 +199,7 @@ const styles = StyleSheet.create({
   },
   exercise: {
     padding: 12,
-    backgroundColor: "#101213",
+    backgroundColor: colors.secondary,
 
     gap: 4,
     borderRadius: 20,

@@ -25,7 +25,7 @@ import Slider from "@react-native-community/slider";
 import { useFocusEffect } from "expo-router";
 import { navigateToGoalSelection } from "@/utils/navigationHelpers";
 import PagerView from "react-native-pager-view";
-
+import colors from "../../styles/colors";
 export default function HomeScreen() {
   const [duration, setDuration] = useState(60);
   const [selectedEquipment, setSelectedEquipment] = useState("No Equipment");
@@ -132,19 +132,16 @@ export default function HomeScreen() {
               <View>
                 <View style={styles.titleContainer}>
                   <Text style={styles.title}>
-                    Ready to improve your{" "}
+                    What are we{" "}
                     <TouchableOpacity onPress={navigateToGoalSelection}>
                       <Text
                         style={styles.titleGoal}
                         onPress={navigateToGoalSelection}
                       >
-                        {workoutData.goal}
+                        focusing
                       </Text>
                     </TouchableOpacity>{" "}
-                    today?
-                  </Text>
-                  <Text style={styles.titleDescription}>
-                    What are we working on today?
+                    on today?
                   </Text>
                 </View>
                 <View style={styles.optionsContainer}>
@@ -165,15 +162,7 @@ export default function HomeScreen() {
                           alignItems: "center",
                         }}
                       >
-                        <Text
-                          style={[
-                            styles.optionText,
-                            workoutData.focus === option.title &&
-                              styles.selectedText,
-                          ]}
-                        >
-                          {option.title}
-                        </Text>
+                        <Text style={[styles.optionText]}>{option.title}</Text>
                       </View>
                       {option.image && (
                         <Image
@@ -195,7 +184,7 @@ export default function HomeScreen() {
           <View style={styles.titleContainer}>
             <Text style={styles.title}>
               What
-              <Text style={{ color: "#FFA31A" }}> equipment</Text> You have
+              <Text style={{ color: colors.primary }}> equipment</Text> you have
               access to?
             </Text>
           </View>
@@ -208,7 +197,9 @@ export default function HomeScreen() {
                   styles.equipmentButton,
                   {
                     backgroundColor:
-                      selectedEquipment === equipment ? "#FFA31A" : "#1E2022",
+                      selectedEquipment === equipment
+                        ? colors.primary
+                        : colors.secondary,
                   },
                 ]}
                 onPress={() => handleEquipmentButtonPress(equipment)}
@@ -226,8 +217,8 @@ export default function HomeScreen() {
         <View style={{ alignContent: "center" }}>
           <View style={styles.titleContainer}>
             <Text style={styles.title}>
-              Pick your training <Text style={{ color: "#FFA31A" }}>time</Text>{" "}
-              for today.
+              Pick your training{" "}
+              <Text style={{ color: colors.primary }}>time</Text> for today.
             </Text>
           </View>
           <View
@@ -251,7 +242,7 @@ export default function HomeScreen() {
               style={{ width: 330, height: 40 }}
               minimumValue={15}
               maximumValue={105}
-              minimumTrackTintColor="#FFA31A"
+              minimumTrackTintColor={colors.primary}
               value={duration}
               onValueChange={handleDurationChange}
               tapToSeek={true}
@@ -263,11 +254,7 @@ export default function HomeScreen() {
   ];
 
   return (
-    <SafeAreaView style={{ flex: 1 }}>
-      <Image
-        source={require("../../assets/images/background2.png")}
-        style={styles.backgroundImage}
-      />
+    <SafeAreaView style={{ flex: 1, backgroundColor: colors.background }}>
       {!workoutData.currentWorkoutPlan && !loading ? (
         <>
           <PagerView
@@ -283,6 +270,21 @@ export default function HomeScreen() {
               </View>
             ))}
           </PagerView>
+          <View style={styles.paginationDotsContainer}>
+            {questions.map((_, idx) => (
+              <View
+                key={idx}
+                style={[
+                  styles.paginationDots,
+                  {
+                    backgroundColor:
+                      currentIndex === idx ? colors.primary : colors.secondary,
+                    opacity: currentIndex === idx ? 1 : 0.7,
+                  },
+                ]}
+              />
+            ))}
+          </View>
           <TouchableOpacity onPress={nextScreen} style={styles.generateButton}>
             <View style={styles.buttonContent}>
               <Text style={styles.buttontitle}>
@@ -325,13 +327,27 @@ const styles = StyleSheet.create({
   flatListContainer: {
     justifyContent: "center",
   },
+  paginationDotsContainer: {
+    flexDirection: "row",
+    justifyContent: "center",
+    position: "absolute",
+    alignSelf: "center",
+    bottom: 200,
+    zIndex: 10,
+  },
+  paginationDots: {
+    width: 14,
+    height: 14,
+    borderRadius: 7,
+    marginHorizontal: 6,
+  },
   optionsContainer: {
     flexDirection: "row",
     flexWrap: "wrap",
     justifyContent: "center",
     paddingHorizontal: 20,
     gap: 10,
-    marginTop: 20,
+    marginTop: 70,
     width: 400,
     alignSelf: "center",
     alignItems: "center",
@@ -350,7 +366,6 @@ const styles = StyleSheet.create({
     textAlign: "left",
     color: "#FFFFFF",
     marginBottom: 20,
-
     fontWeight: 300,
     lineHeight: 25,
   },
@@ -365,7 +380,7 @@ const styles = StyleSheet.create({
   },
   currentValue: {
     fontSize: 20,
-    color: "#FFA31A",
+    color: colors.primary,
     fontWeight: "600",
   },
   buttonContent: {
@@ -374,7 +389,7 @@ const styles = StyleSheet.create({
     width: 290,
   },
   optionButton: {
-    backgroundColor: "#1E2022",
+    backgroundColor: colors.secondary,
     padding: 16,
     borderRadius: 10,
     width: "31%",
@@ -382,7 +397,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   selectedButton: {
-    backgroundColor: "#FFA31A",
+    backgroundColor: colors.primary,
   },
   optionText: {
     color: "#FFFFFF",
@@ -397,7 +412,7 @@ const styles = StyleSheet.create({
   },
   titleDescription: {
     fontSize: 18,
-    top: 10,
+    top: 50,
     color: "#FFFFFF",
     textAlign: "left",
     width: 290,
@@ -440,8 +455,7 @@ const styles = StyleSheet.create({
   },
   titleGoal: {
     fontSize: 35,
-    color: "#FFA31A",
-
+    color: colors.textHighlight,
     fontWeight: 500,
     letterSpacing: 1,
     top: 20,
@@ -451,7 +465,7 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   generateButton: {
-    backgroundColor: "#FFA31A",
+    backgroundColor: colors.primary,
     width: 320,
     height: 75,
     bottom: 100,
@@ -460,7 +474,7 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     borderCurve: "continuous",
     justifyContent: "center",
-    shadowColor: "#FFA31A",
+    shadowColor: colors.primary,
     shadowOpacity: 0.4,
     shadowRadius: 12,
     elevation: 5,
@@ -472,8 +486,9 @@ const styles = StyleSheet.create({
   },
   loadingText: {
     fontSize: 14,
-    color: "#B2B2B2",
+    color: colors.textHighlight,
     textAlign: "center",
+    fontWeight: "500",
   },
   errorContainer: {
     display: "flex",
@@ -485,6 +500,7 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     borderCurve: "continuous",
     marginTop: 70,
+    alignSelf: "center",
   },
   errorText: {
     color: "white",
