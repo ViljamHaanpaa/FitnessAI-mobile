@@ -8,6 +8,7 @@ export interface WorkoutData {
   workoutGenerated: boolean;
   currentWorkoutPlan: WorkoutPlan | null;
   workoutActive: boolean;
+  userCreatedAt: string | null;
 }
 export type WorkoutGoal =
   | "Endurance"
@@ -16,6 +17,24 @@ export type WorkoutGoal =
   | "Strength"
   | "Mobility"
   | "Calisthenics";
+
+export const WORKOUT_GOALS: WorkoutGoal[] = [
+  "Endurance",
+  "Muscle Gain",
+  "Weight Loss",
+  "Strength",
+  "Mobility",
+  "Calisthenics",
+];
+
+export const WORKOUT_GOALS_DISPLAY: Record<WorkoutGoal, string> = {
+  Endurance: "Endurance 🏃‍♂️",
+  "Muscle Gain": "Muscle Gain 💪",
+  "Weight Loss": "Weight Loss ⚖️",
+  Strength: "Strength 🏋️",
+  Mobility: "Mobility 🤸",
+  Calisthenics: "Calisthenics 🧗",
+};
 
 export type WorkoutGoalSport =
   | "Golf"
@@ -28,15 +47,6 @@ export type WorkoutGoalSport =
   | "Volleyball"
   | "Cycling";
 
-export const WORKOUT_GOALS: WorkoutGoal[] = [
-  "Endurance",
-  "Muscle Gain",
-  "Weight Loss",
-  "Strength",
-  "Mobility",
-  "Calisthenics",
-];
-
 export const WORKOUT_GOALS_SPORTS: WorkoutGoalSport[] = [
   "Golf",
   "Running",
@@ -48,6 +58,18 @@ export const WORKOUT_GOALS_SPORTS: WorkoutGoalSport[] = [
   "Volleyball",
   "Cycling",
 ];
+
+export const WORKOUT_GOALS_SPORTS_DISPLAY: Record<WorkoutGoalSport, string> = {
+  Golf: "Golf 🏌️",
+  Running: "Running 🏃",
+  Swimming: "Swimming 🏊",
+  Football: "Football ⚽",
+  Basketball: "Basketball 🏀",
+  Baseball: "Baseball ⚾",
+  "Ice Hockey": "Ice Hockey 🏒",
+  Volleyball: "Volleyball 🏐",
+  Cycling: "Cycling 🚴",
+};
 
 export interface Exercise {
   name: string;

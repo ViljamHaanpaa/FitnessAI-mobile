@@ -155,14 +155,16 @@ export const RepsExerciseCard = ({
   return (
     <View style={styles.pageContainer}>
       <Text style={styles.exerciseTitle}>{exercise.name}</Text>
-      <Text style={styles.exerciseSubtitle}>
-        Sets {exercise.sets} | Reps {exercise.reps} | Rest{" "}
-        {Number(exercise.rest) >= 60
-          ? `${Math.round(Number(exercise.rest) / 60)} min`
-          : `${exercise.rest}s`}
-      </Text>
+      {exercise.rest != null && (
+        <Text style={styles.exerciseSubtitle}>
+          Sets {exercise.sets} | Reps {exercise.reps} | Rest{" "}
+          {Number(exercise.rest) >= 60
+            ? `${Math.round(Number(exercise.rest) / 60)} min`
+            : `${exercise.rest}s`}
+        </Text>
+      )}
 
-      <View style={{ marginTop: 40 }}>
+      <View style={{ marginTop: 110, position: "absolute" }}>
         <AnimatedCircularProgress
           size={280}
           width={15}
@@ -200,17 +202,21 @@ export const RepsExerciseCard = ({
                 <Text style={styles.goText}>Done!</Text>
               ) : null}
               <Text style={styles.setsLabel}>
-                Set{" "}
-                {phase === "completed"
-                  ? exercise.sets
-                  : Math.min(setsCompleted + 1, exercise.sets)}{" "}
-                of {exercise.sets}
+                {exercise.sets != null && (
+                  <Text style={styles.setsLabel}>
+                    Set{" "}
+                    {phase === "completed"
+                      ? exercise.sets
+                      : Math.min(setsCompleted + 1, exercise.sets)}{" "}
+                    of {exercise.sets}
+                  </Text>
+                )}
               </Text>
             </>
           )}
         </AnimatedCircularProgress>
       </View>
-
+      <Text style={styles.descriptionText}>{exercise.description}</Text>
       <View
         style={{
           flexDirection: "row",
@@ -303,7 +309,6 @@ const styles = StyleSheet.create({
   exerciseSubtitle: {
     fontSize: 16,
     color: "#bbb",
-    marginBottom: 20,
   },
   goText: {
     fontSize: 45,
@@ -317,6 +322,15 @@ const styles = StyleSheet.create({
     color: "#fff",
     textAlign: "center",
     letterSpacing: 5,
+  },
+  descriptionText: {
+    fontSize: 16,
+    color: colors.textSecondary,
+    textAlign: "center",
+    fontWeight: "400",
+    width: 220,
+    position: "absolute",
+    bottom: 250,
   },
   setsLabel: {
     fontSize: 16,

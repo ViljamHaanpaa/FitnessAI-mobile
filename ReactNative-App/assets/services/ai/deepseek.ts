@@ -1,10 +1,45 @@
 import { WorkoutData } from "@/types/workout";
 const DEEPSEEK_API_KEY = process.env.EXPO_PUBLIC_DEEPSEEK_API_KEY;
 const API_URL = "https://api.deepseek.com/v1/chat/completions";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+
+export const getRecentWorkoutHistory = async (count = 5) => {
+  const completedWorkoutsString = await AsyncStorage.getItem(
+    "CompletedWorkouts"
+  );
+  if (!completedWorkoutsString) return [];
+  const completedWorkouts = JSON.parse(completedWorkoutsString);
+  return completedWorkouts.slice(-count).map((w: any) => {
+    let completedExercises: string[] = [];
+    if (
+      w.completedExercises &&
+      typeof w.completedExercises === "object" &&
+      !Array.isArray(w.completedExercises)
+    ) {
+      completedExercises = Object.entries(w.completedExercises)
+        .filter(
+          ([name, done]) =>
+            done && typeof name === "string" && isNaN(Number(name))
+        )
+        .map(([name]) => name);
+    } else if (Array.isArray(w.completedExercises)) {
+      // fallback for legacy/bad data
+      completedExercises = (w.completedExercises as string[]).filter(
+        (v: string) => typeof v === "string" && isNaN(Number(v))
+      );
+    }
+    return {
+      title: w.title,
+      date: w.completedAt,
+      completedExercises,
+    };
+  });
+};
 
 export const generateWorkoutPlan = async (workoutData: WorkoutData) => {
   console.log("Generating workout plan...");
-
+  const recentHistory = await getRecentWorkoutHistory(5);
+  console.log("Recent workout history:", recentHistory);
   const toolSchema = {
     type: "function",
     function: {
@@ -231,14 +266,23 @@ export const generateWorkoutPlan = async (workoutData: WorkoutData) => {
           content: `Create a personalized workout plan with the following specifications:
             - Primary Focus: ${workoutData.focus || "General"}
             - Goal: ${workoutData.goal}
-            - Experience Level: ${workoutData.level}/10
+            - Experience Level: ${
+              workoutData.level
+            }/10 (1 being very beginner, 10 being advanced trainer almost ready for competition)
             - Gender: ${workoutData.gender}
-            - Available Equipment: ${workoutData.equipment || "Bodyweight only"}
+            - Available Equipment: ${
+              workoutData.equipment || "Bodyweight only"
+            } (if gym equipment is available, please include more of them example dumbbells, barbell, cable machine, Barbell, leg press etc. of course use them according to the goal)
             - Duration: ${workoutData.duration || "45"} minutes
             - Session Type: Progressive workout targeting ${workoutData.goal}
             - Timestamp: ${new Date().toISOString()}
 
-            IMPORTANT: All durations must be given as a string representing the number of seconds (e.g. "120"), NOT as text like "2 minutes".
+            Recent workout history (for variety and progression): (try not to repeat these exercises too much)
+            ${JSON.stringify(recentHistory, null, 2)}
+            
+             IMPORTANT:
+            - All durations must be given as a string representing the number of seconds (e.g. "120"), NOT as text like "2 minutes".
+            - Keep the warm-up and cooldown sections brief (no more th
 
             For each exercise, include:
             - a short, clear instruction string (e.g. "Stand shoulder-width apart. Hinge at the hips, back straight. Hold dumbbells with palms in. Pull elbows back, squeeze shoulder blades.")

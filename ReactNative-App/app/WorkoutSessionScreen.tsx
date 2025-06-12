@@ -114,7 +114,7 @@ export default function WorkoutSessionScreen() {
       >
         {allExercises.map((exercise, idx) => (
           <View key={idx}>
-            {exercise.type === "time" ? (
+            {exercise.type === "time" && exercise.duration ? (
               <TimeExerciseCard
                 exercise={exercise}
                 onComplete={nextPage}

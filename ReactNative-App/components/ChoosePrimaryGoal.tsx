@@ -1,5 +1,11 @@
 import React, { useState } from "react";
-import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  StyleSheet,
+  ScrollView,
+} from "react-native";
 import { useWorkout } from "@/contexts/WorkoutContext";
 import Animated, {
   useAnimatedStyle,
@@ -7,7 +13,12 @@ import Animated, {
   useSharedValue,
 } from "react-native-reanimated";
 import Icon from "@expo/vector-icons/FontAwesome";
-import { WORKOUT_GOALS, WORKOUT_GOALS_SPORTS } from "@/types/workout";
+import {
+  WORKOUT_GOALS,
+  WORKOUT_GOALS_SPORTS,
+  WORKOUT_GOALS_DISPLAY,
+  WORKOUT_GOALS_SPORTS_DISPLAY,
+} from "@/types/workout";
 import colors from "../styles/colors";
 
 export const ChoosePrimaryGoal = () => {
@@ -51,7 +62,7 @@ export const ChoosePrimaryGoal = () => {
       fitnessHeight.value = withTiming(0);
       setShowFitnessGoals(false);
     }
-    sportsHeight.value = withTiming(showSportsGoals ? 0 : 180);
+    sportsHeight.value = withTiming(showSportsGoals ? 0 : 300);
     setShowSportsGoals(!showSportsGoals);
   };
 
@@ -74,29 +85,43 @@ export const ChoosePrimaryGoal = () => {
           }}
           onPress={toggleFitnessMenu}
         >
-          <Text style={styles.questionTitle}>Fitness? </Text>
+          <Text style={styles.questionTitle}>💪 Fitness </Text>
           <Icon
             name={showFitnessGoals ? "chevron-down" : "chevron-right"}
             size={20}
-            color="#FFFFFF"
+            color={colors.highlight}
           />
         </TouchableOpacity>
-        <Animated.View style={[styles.goalsContainer, fitnessAnimatedStyle]}>
-          {WORKOUT_GOALS.map((goal) => (
-            <TouchableOpacity
-              key={goal}
-              style={[
-                styles.goalButton,
-                {
-                  backgroundColor:
-                    selectedGoal === goal ? colors.primary : colors.secondary,
-                },
-              ]}
-              onPress={() => handleGoalButtonPress(goal)}
-            >
-              <Text style={styles.goalButtonText}>{goal}</Text>
-            </TouchableOpacity>
-          ))}
+        <Animated.View style={[fitnessAnimatedStyle]}>
+          <ScrollView
+            style={{ maxHeight: 180, width: "100%" }}
+            contentContainerStyle={{
+              flexDirection: "row",
+              flexWrap: "wrap",
+              gap: 10,
+              justifyContent: "center",
+            }}
+            showsVerticalScrollIndicator={false}
+          >
+            {WORKOUT_GOALS.map((goal) => (
+              <TouchableOpacity
+                key={goal}
+                style={[
+                  styles.goalButton,
+                  {
+                    backgroundColor:
+                      selectedGoal === goal ? colors.primary : colors.secondary,
+                  },
+                ]}
+                onPress={() => handleGoalButtonPress(goal)}
+              >
+                <Text style={styles.goalButtonText}>
+                  {" "}
+                  {WORKOUT_GOALS_DISPLAY[goal]}
+                </Text>
+              </TouchableOpacity>
+            ))}
+          </ScrollView>
         </Animated.View>
         <TouchableOpacity
           style={{
@@ -107,30 +132,43 @@ export const ChoosePrimaryGoal = () => {
           }}
           onPress={toggleSportsMenu}
         >
-          <Text style={styles.questionTitle}>Sport performance?</Text>
+          <Text style={styles.questionTitle}>🏅 Sport performance</Text>
           <Icon
             name={showSportsGoals ? "chevron-down" : "chevron-right"}
             size={20}
-            color="#FFFFFF"
+            color={colors.highlight}
           />
         </TouchableOpacity>
 
-        <Animated.View style={[styles.goalsContainer, sportsAnimatedStyle]}>
-          {WORKOUT_GOALS_SPORTS.map((goal) => (
-            <TouchableOpacity
-              key={goal}
-              style={[
-                styles.goalButton,
-                {
-                  backgroundColor:
-                    selectedGoal === goal ? colors.primary : colors.secondary,
-                },
-              ]}
-              onPress={() => handleGoalButtonPress(goal)}
-            >
-              <Text style={styles.goalButtonText}>{goal}</Text>
-            </TouchableOpacity>
-          ))}
+        <Animated.View style={[sportsAnimatedStyle]}>
+          <ScrollView
+            style={{ maxHeight: 300, width: "100%" }}
+            contentContainerStyle={{
+              flexDirection: "row",
+              flexWrap: "wrap",
+              gap: 10,
+              justifyContent: "center",
+            }}
+            showsVerticalScrollIndicator={false}
+          >
+            {WORKOUT_GOALS_SPORTS.map((goal) => (
+              <TouchableOpacity
+                key={goal}
+                style={[
+                  styles.goalButton,
+                  {
+                    backgroundColor:
+                      selectedGoal === goal ? colors.primary : colors.secondary,
+                  },
+                ]}
+                onPress={() => handleGoalButtonPress(goal)}
+              >
+                <Text style={styles.goalButtonText}>
+                  {WORKOUT_GOALS_SPORTS_DISPLAY[goal]}
+                </Text>
+              </TouchableOpacity>
+            ))}
+          </ScrollView>
         </Animated.View>
       </View>
     </View>
@@ -185,7 +223,7 @@ const styles = StyleSheet.create({
     alignContent: "center",
     alignItems: "center",
     justifyContent: "center",
-    overflow: "hidden", // Add this
+    overflow: "hidden",
   },
   goalButton: {
     borderRadius: 10,
@@ -220,7 +258,7 @@ const styles = StyleSheet.create({
     fontSize: 22,
     alignSelf: "center",
     textAlign: "left",
-    color: "#FFFFFF",
+    color: colors.textPrimary,
     marginBottom: 20,
     marginTop: 20,
     width: 300,

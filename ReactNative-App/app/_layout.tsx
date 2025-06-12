@@ -11,7 +11,7 @@ import { useEffect } from "react";
 import "react-native-reanimated";
 import { WorkoutProvider } from "@/contexts/WorkoutContext";
 import { useColorScheme } from "@/hooks/useColorScheme";
-
+import AsyncStorage from "@react-native-async-storage/async-storage";
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
@@ -21,12 +21,12 @@ export default function RootLayout() {
   });
 
   // reset AsyncStorage for development purposes
-  // useEffect(() => {
-  //   const resetAsyncStorage = async () => {
-  //     await AsyncStorage.clear();
-  //   };
-  //   resetAsyncStorage();
-  // }, []);
+  //useEffect(() => {
+  //  const resetAsyncStorage = async () => {
+  //    await AsyncStorage.clear();
+  //  };
+  //  resetAsyncStorage();
+  //}, []);
 
   useEffect(() => {
     if (loaded) {

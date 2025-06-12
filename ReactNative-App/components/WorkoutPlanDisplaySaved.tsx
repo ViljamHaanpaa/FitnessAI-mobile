@@ -1,8 +1,21 @@
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { WorkoutPlan } from "@/types/workout";
 import colors from "@/styles/colors";
+import Icon from "@expo/vector-icons/FontAwesome";
+import { useWorkout } from "@/contexts/WorkoutContext";
+import { router } from "expo-router";
 export const WorkoutPlanDisplay = ({ plan }: { plan: WorkoutPlan | null }) => {
+  const { updateWorkoutData, workoutData } = useWorkout();
   if (!plan) return null;
+
+  const startWorkout = () => {
+    console.log("Start Workout pressed");
+    updateWorkoutData({
+      workoutGenerated: true,
+      currentWorkoutPlan: plan,
+    });
+    router.push("/");
+  };
 
   return (
     <View style={styles.container}>
@@ -58,6 +71,12 @@ export const WorkoutPlanDisplay = ({ plan }: { plan: WorkoutPlan | null }) => {
           </View>
         ))}
       </View>
+      <TouchableOpacity style={styles.generateButton} onPress={startWorkout}>
+        <View style={styles.buttonContent}>
+          <Text style={styles.buttontitle}> Use Workout</Text>
+          <Icon name="chevron-right" size={20} color="#FFFFFF" />
+        </View>
+      </TouchableOpacity>
     </View>
   );
 };
@@ -74,7 +93,6 @@ const styles = StyleSheet.create({
   },
   section: {
     gap: 15,
-    marginTop: 30,
   },
   sectionTitle: {
     fontSize: 20,
@@ -108,5 +126,31 @@ const styles = StyleSheet.create({
   saveButton: {
     bottom: 20,
     left: 10,
+  },
+  buttonContent: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    width: 290,
+  },
+  buttontitle: {
+    color: "#FFFFFF",
+    fontSize: 19,
+    fontWeight: 600,
+    textAlign: "left",
+    paddingLeft: 20,
+  },
+  generateButton: {
+    backgroundColor: colors.greenPrimary,
+    width: 320,
+    height: 75,
+    alignSelf: "center",
+
+    borderRadius: 20,
+    borderCurve: "continuous",
+    justifyContent: "center",
+    shadowColor: colors.greenPrimary,
+    shadowOpacity: 0.4,
+    shadowRadius: 12,
+    elevation: 5,
   },
 });

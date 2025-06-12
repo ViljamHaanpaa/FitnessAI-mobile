@@ -59,7 +59,6 @@ export default function HomeScreen() {
       pagerRef.current?.setPage(currentIndex + 1);
       setCurrentIndex(currentIndex + 1);
     } else {
-      // Save all data before navigation
       generatePlan();
     }
   };
@@ -358,7 +357,7 @@ const styles = StyleSheet.create({
     alignContent: "center",
     alignItems: "center",
     justifyContent: "center",
-    top: 100,
+    top: 120,
   },
   questionTitle: {
     fontSize: 20,
@@ -427,7 +426,8 @@ const styles = StyleSheet.create({
   },
   equipmentButton: {
     width: 320,
-    borderRadius: 10,
+    borderRadius: 20,
+    borderCurve: "continuous",
     padding: 30,
     justifyContent: "center",
   },

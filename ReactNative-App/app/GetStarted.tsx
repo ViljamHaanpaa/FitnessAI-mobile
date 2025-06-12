@@ -4,6 +4,7 @@ import {
   Text,
   View,
   FlatList,
+  Alert,
 } from "react-native";
 import { useState, useRef, JSX, useEffect } from "react";
 import { useWorkout } from "../contexts/WorkoutContext";
@@ -25,6 +26,7 @@ export default function IntroScreen() {
   const params = useLocalSearchParams();
   const initialIndex = params.index ? Number(params.index) - 1 : 0;
   const [currentIndex, setCurrentIndex] = useState(initialIndex);
+  const { workoutData } = useWorkout();
   useEffect(() => {
     if (initialIndex > 0) {
       flatListRef.current?.scrollToIndex({
@@ -41,6 +43,17 @@ export default function IntroScreen() {
       });
       setCurrentIndex(currentIndex + 1);
     } else {
+      if (!workoutData.goal || workoutData.goal === "") {
+        Alert.alert(
+          "Choose a goal",
+          "Please select a primary goal to continue.",
+          [{ text: "OK" }]
+        );
+        return;
+      }
+      if (workoutData.userCreatedAt === null) {
+        updateWorkoutData({ userCreatedAt: new Date().toISOString() });
+      }
       router.push("/(tabs)");
     }
   };
@@ -84,6 +97,7 @@ export default function IntroScreen() {
                 style={{ width: 300, height: 40 }}
                 minimumValue={0}
                 maximumValue={10}
+                value={Number(workoutData.level)}
                 minimumTrackTintColor={colors.primary}
                 tapToSeek={true}
                 onValueChange={handleLevelChange}

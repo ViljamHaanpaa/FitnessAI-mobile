@@ -77,13 +77,14 @@ export const WorkoutProvider = ({ children }: { children: ReactNode }) => {
   const [workoutData, setWorkoutData] = useState<WorkoutData>({
     gender: "",
     goal: "",
-    level: "",
+    level: "5",
     duration: "60",
     equipment: "",
     focus: "",
     workoutGenerated: false,
     currentWorkoutPlan: null,
     workoutActive: false,
+    userCreatedAt: null,
   });
 
   // Load saved workout data on mount

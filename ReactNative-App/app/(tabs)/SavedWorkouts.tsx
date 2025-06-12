@@ -1,35 +1,34 @@
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useEffect } from "react";
 import { StyleSheet, View, Text, FlatList } from "react-native";
+import { useFocusEffect } from "expo-router";
 import { WorkoutPlan } from "@/types/workout";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useFocusEffect } from "@react-navigation/native";
 import { CollapsibleWorkout } from "@/components/CollapsibleWorkout";
 import colors from "@/styles/colors";
-
+import { fetchSavedWorkouts } from "@/assets/services/storage/workoutStorage";
 export default function SavedWorkouts() {
   const [savedWorkouts, setSavedWorkouts] = useState<WorkoutPlan[]>([]);
 
   useFocusEffect(
-    useCallback(() => {
-      const fetchSavedWorkouts = async () => {
+    React.useCallback(() => {
+      const loadSavedWorkouts = async () => {
         try {
-          const workouts = await AsyncStorage.getItem("SavedWorkouts");
-          if (workouts) {
-            const parsedWorkouts: WorkoutPlan[] = JSON.parse(workouts);
-
-            console.log("Parsed workouts:", parsedWorkouts);
-            setSavedWorkouts(
-              Array.isArray(parsedWorkouts) ? parsedWorkouts : [parsedWorkouts]
-            );
-          }
+          const workouts = await fetchSavedWorkouts();
+          // Sort by timestamp or completedAt, newest first
+          const sorted = workouts.slice().sort((a, b) => {
+            const timeA = new Date(a.timestamp || 0).getTime();
+            const timeB = new Date(b.timestamp || 0).getTime();
+            return timeB - timeA; // Newest first
+          });
+          setSavedWorkouts(sorted);
         } catch (error) {
-          console.error("Error fetching saved workouts:", error);
+          console.error("Error loading saved workouts:", error);
         }
       };
 
-      fetchSavedWorkouts();
+      loadSavedWorkouts();
     }, [])
   );
+
   const renderWorkout = ({ item }: { item: WorkoutPlan }) => (
     <CollapsibleWorkout workout={item} />
   );
@@ -37,7 +36,7 @@ export default function SavedWorkouts() {
   return (
     <View style={styles.container}>
       {savedWorkouts.length === 0 ? (
-        <Text style={styles.noWorkouts}>No saved workouts yet</Text>
+        <Text style={styles.noWorkouts}>No saved workouts yet...</Text>
       ) : (
         <FlatList
           ListHeaderComponent={
@@ -67,16 +66,18 @@ const styles = StyleSheet.create({
   },
   listContainer: {
     padding: 16,
-    gap: 16,
+    gap: 10,
   },
   noWorkouts: {
-    color: "#FFA500",
+    color: colors.primary,
     fontSize: 16,
     fontWeight: "300",
     textAlign: "center",
     marginTop: 20,
     alignSelf: "center",
     justifyContent: "center",
+    position: "absolute",
+    top: "50%",
   },
   Headersection: {
     flexDirection: "row",

@@ -2,6 +2,7 @@ const colors = {
   primary: "#268CC9",
   secondary: "#1D3048",
   tertiary: "#1D618A",
+  highlight: "#FFA500",
   background: "#091521",
   tabBarColor: "#132232",
   error: "#F4405F",

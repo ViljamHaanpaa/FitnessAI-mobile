@@ -6,3 +6,10 @@ export const navigateToGoalSelection = () => {
     params: { index: 2 },
   });
 };
+
+export const navigateToLevelSelection = () => {
+  router.push({
+    pathname: "/GetStarted",
+    params: { index: 1 },
+  });
+};

@@ -7,61 +7,96 @@ import {
   Dimensions,
   TouchableOpacity,
 } from "react-native";
-import { WorkoutGoalSport } from "@/types/workout";
 import { useWorkout } from "@/contexts/WorkoutContext";
-import { WORKOUT_FOCUS_OPTIONS_SPORTS } from "../../assets/data/workouts/focusOptions";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { navigateToGoalSelection } from "@/utils/navigationHelpers";
+import {
+  navigateToGoalSelection,
+  navigateToLevelSelection,
+} from "@/utils/navigationHelpers";
 import colors from "@/styles/colors";
+import {
+  WORKOUT_GOALS_DISPLAY,
+  WORKOUT_GOALS_SPORTS_DISPLAY,
+} from "@/types/workout";
 
 export default function Profile() {
   const { workoutData } = useWorkout();
   const screenWidth = Dimensions.get("window").width;
-  const getFocusImage = () => {
-    if (!workoutData.goal || !workoutData.focus) return null;
-    const focusOptions =
-      WORKOUT_FOCUS_OPTIONS_SPORTS[workoutData.goal as WorkoutGoalSport] || [];
-    const selectedFocus = focusOptions.find(
-      (option) => option.title === workoutData.focus
-    );
-    return selectedFocus?.image;
-  };
+  let caption = "Welcome!";
+  if (workoutData.userCreatedAt) {
+    const created = new Date(workoutData.userCreatedAt);
+    const now = new Date();
+    const diffMs = now.getTime() - created.getTime();
+    const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+    const diffMonths = Math.floor(diffDays / 30);
 
-  const focusImage = getFocusImage();
+    if (diffMonths >= 1) {
+      caption = `${diffMonths} month${diffMonths > 1 ? "s" : ""} and counting`;
+    } else if (diffDays >= 1) {
+      caption = `${diffDays} day${diffDays > 1 ? "s" : ""} and counting`;
+    } else {
+      caption = "Joined today";
+    }
+  }
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.overlay}>
         <Text style={styles.title}>Trainee{"\n"} Overview</Text>
-        <Text style={styles.caption}>3 Months and Counting</Text>
+        <Text style={styles.caption}>{caption}</Text>
 
         <View style={styles.grid}>
-          <View style={styles.box}>
-            <View style={styles.levelCircle}>
-              <Text style={styles.levelText}>Level</Text>
-              <Text style={styles.levelNumber}>{workoutData.level}</Text>
+          <TouchableOpacity onPress={navigateToLevelSelection}>
+            <View style={styles.box}>
+              <Text style={styles.levelText}>Experience Level</Text>
+              <View style={styles.levelCircle}>
+                <Text
+                  style={[
+                    styles.levelNumber,
+                    workoutData.level &&
+                    workoutData.level.toString().length >= 3
+                      ? { fontSize: 25 }
+                      : null,
+                  ]}
+                >
+                  {workoutData.level}
+                </Text>
+              </View>
+              <View style={styles.tapToUpdateContainer}>
+                <Text style={styles.changeGoalText}>Tap to Update</Text>
+                <MaterialCommunityIcons
+                  name="chevron-right"
+                  size={16}
+                  color="#007AFF"
+                />
+              </View>
             </View>
-          </View>
-
+          </TouchableOpacity>
           <TouchableOpacity onPress={navigateToGoalSelection}>
             <View style={styles.box}>
-              <Text style={styles.goalLabel}>Current Goal {"  "}</Text>
-
-              {focusImage && (
-                <Image source={focusImage} style={styles.focusImage} />
-              )}
+              <Text style={styles.levelText}>Current Goal</Text>
               <View
                 style={{
-                  flexDirection: "row",
+                  alignSelf: "center",
+                  justifyContent: "center",
                   alignItems: "center",
-                  marginTop: 10,
                 }}
               >
-                <Text style={styles.goalText}>{workoutData.goal}</Text>
+                <Text style={styles.goalText}>
+                  {WORKOUT_GOALS_DISPLAY[
+                    workoutData.goal as keyof typeof WORKOUT_GOALS_DISPLAY
+                  ] ||
+                    WORKOUT_GOALS_SPORTS_DISPLAY[
+                      workoutData.goal as keyof typeof WORKOUT_GOALS_SPORTS_DISPLAY
+                    ] ||
+                    workoutData.goal}
+                </Text>
+              </View>
+              <View style={styles.tapToUpdateContainer}>
+                <Text style={styles.changeGoalText}>Change goal</Text>
                 <MaterialCommunityIcons
-                  name="pencil"
-                  size={17}
-                  color="grey"
-                  style={{ left: 5 }}
+                  name="chevron-right"
+                  size={16}
+                  color="#007AFF"
                 />
               </View>
             </View>
@@ -138,33 +173,50 @@ const styles = StyleSheet.create({
     borderWidth: 8,
     borderColor: "limegreen",
     borderRadius: 100,
-    width: 120,
-    height: 120,
+    width: 80,
+    height: 80,
     alignItems: "center",
     justifyContent: "center",
+    position: "absolute",
   },
   levelText: {
-    color: "white",
-    fontSize: 16,
+    color: colors.textPrimary,
+    fontWeight: "500",
+    fontSize: 15,
+    position: "absolute",
+    top: 15,
   },
   levelNumber: {
     color: "white",
-    fontSize: 40,
-    fontWeight: "bold",
+    fontSize: 30,
+    fontWeight: "600",
   },
   goalLabel: {
-    color: "white",
-    fontSize: 17,
-    marginBottom: 10,
+    color: colors.primary,
+    fontSize: 15,
     textAlign: "center",
+    fontWeight: "500",
   },
   goalText: {
-    color: colors.textHighlight,
-    fontSize: 20,
+    color: colors.textPrimary,
+    fontSize: 30,
     fontWeight: "600",
+    width: 160,
     textAlign: "center",
-    alignSelf: "center",
+    position: "absolute",
+  },
+  tapToUpdateContainer: {
+    flexDirection: "row",
+    position: "absolute",
     left: 5,
+    right: 0,
+    bottom: 20,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  changeGoalText: {
+    color: "#007AFF",
+    fontSize: 14,
   },
   chartBox: {
     backgroundColor: colors.secondary,

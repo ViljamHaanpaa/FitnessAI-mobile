@@ -23,7 +23,10 @@ export const TimeExerciseCard = ({
   const [isTimerCompleted, setIsTimerCompleted] = useState(false);
   const { markExerciseCompleted, completedExercises } = useWorkout();
   const [hasStarted, setHasStarted] = useState(false);
+
   useEffect(() => {
+    console.log("TimeExerciseCard rendered with exercise:", exercise);
+    console.log("TimeExerciseCard rendered with exercise:", exercise.name);
     setRemainingTime(Number(exercise.duration) || 0);
     setProgress(0);
     setIsTimerCompleted(false);
@@ -117,7 +120,7 @@ export const TimeExerciseCard = ({
         <Icon name="clock-o" size={16} color="#bbb" />{" "}
         {Math.round(Number(exercise.duration) / 60)} min
       </Text>
-      <View style={{ marginTop: 70 }}>
+      <View style={{ marginTop: 110, position: "absolute" }}>
         <AnimatedCircularProgress
           size={280}
           width={15}
@@ -139,6 +142,7 @@ export const TimeExerciseCard = ({
           )}
         </AnimatedCircularProgress>
       </View>
+      <Text style={styles.descriptionText}>{exercise.description}</Text>
       <View
         style={{
           flexDirection: "row",
@@ -182,6 +186,15 @@ const styles = StyleSheet.create({
     color: "#fff",
     fontWeight: "600",
     marginBottom: 10,
+  },
+  descriptionText: {
+    fontSize: 16,
+    color: colors.textSecondary,
+    textAlign: "center",
+    fontWeight: "400",
+    width: 220,
+    bottom: 250,
+    position: "absolute",
   },
   exerciseDuration: {
     fontSize: 16,

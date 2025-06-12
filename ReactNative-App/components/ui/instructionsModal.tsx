@@ -26,7 +26,6 @@ export const InstructionsModal: React.FC<InstructionsModalProps> = ({
 }) => {
   const snapPoints = useMemo(() => ["85%"], []);
   const bottomSheetRef = useRef<BottomSheet>(null);
-  console.log("InstructionsModal rendered with exercise:", exercise);
   useEffect(() => {
     if (!visible && bottomSheetRef.current) {
       bottomSheetRef.current.close();
