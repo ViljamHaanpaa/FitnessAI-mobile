@@ -73,8 +73,12 @@ export const ChoosePrimaryGoal = () => {
         alignItems: "center",
         gap: 50,
         height: 400,
+        marginTop: 20,
       }}
     >
+      <Text style={styles.title}>
+        Choose your primary <Text style={{ color: colors.primary }}>goal</Text>
+      </Text>
       <View>
         <TouchableOpacity
           style={{
@@ -193,10 +197,9 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 40,
     color: "#FFFFFF",
-    position: "absolute",
     textAlign: "left",
-    width: 330,
-    top: 100,
+    alignSelf: "center",
+    marginTop: 10,
     fontWeight: 400,
     letterSpacing: 1,
     lineHeight: 40,

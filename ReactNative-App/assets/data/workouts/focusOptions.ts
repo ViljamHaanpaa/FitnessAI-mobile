@@ -15,6 +15,7 @@ import { cyclingOptions } from "./constants/sportPerformance/cycling/cycling";
 import { runningOptions } from "./constants/sportPerformance/running/running";
 import { swimmingOptions } from "./constants/sportPerformance/swimming/swiming";
 import { calisthenicsOptions } from "./constants/Fitness/calisthenics/calisthenics";
+import { practicalShootingOptions } from "./constants/sportPerformance/practicalshooting/practicalshooting";
 export const WORKOUT_FOCUS_OPTIONS: Record<WorkoutGoal, FocusOption[]> = {
   "Muscle Gain": muscleGainOptions,
   "Weight Loss": weightLossOptions,
@@ -37,4 +38,5 @@ export const WORKOUT_FOCUS_OPTIONS_SPORTS: Record<
   "Ice Hockey": icehockeyOptions,
   Volleyball: volleyballOptions,
   Cycling: cyclingOptions,
+  "Practical Shooting": practicalShootingOptions,
 };

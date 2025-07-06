@@ -14,3 +14,17 @@ export const fetchSavedWorkouts = async (): Promise<WorkoutPlan[]> => {
     return [];
   }
 };
+
+export const fetchCompletedWorkouts = async (): Promise<WorkoutPlan[]> => {
+  try {
+    const workouts = await AsyncStorage.getItem("CompletedWorkouts");
+    if (workouts) {
+      const parsedWorkouts: WorkoutPlan[] = JSON.parse(workouts);
+      return Array.isArray(parsedWorkouts) ? parsedWorkouts : [parsedWorkouts];
+    }
+    return [];
+  } catch (error) {
+    console.error("Error fetching completed workouts:", error);
+    return [];
+  }
+};

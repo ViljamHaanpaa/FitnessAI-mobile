@@ -7,6 +7,7 @@ import { router, usePathname } from "expo-router";
 import { useWorkout } from "../../contexts/WorkoutContext";
 import colors from "../../styles/colors";
 import { StartWorkoutAlert } from "@/components/alerts/GlobalAlerts";
+import * as Haptics from "expo-haptics";
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
@@ -92,7 +93,12 @@ export default function TabLayout() {
                 color={focused ? "#FFA500" : color}
               />
             ) : (
-              <TouchableOpacity onPress={handlePlayPress}>
+              <TouchableOpacity
+                onPress={() => {
+                  Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                  handlePlayPress();
+                }}
+              >
                 <Animated.View
                   style={[
                     {

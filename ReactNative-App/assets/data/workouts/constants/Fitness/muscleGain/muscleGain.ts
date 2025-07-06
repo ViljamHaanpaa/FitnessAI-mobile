@@ -4,17 +4,17 @@ export const muscleGainOptions: FocusOption[] = [
   {
     id: "full-body",
     title: "Full Body",
-    image: require("./images/full-body.png"),
+    image: require("./images/1.png"),
   },
   {
     id: "upper-body",
     title: "Upper Body",
-    image: require("./images/upper-body.png"),
+    image: require("./images/2.png"),
   },
   {
     id: "lower-body",
     title: "Lower Body",
-    image: require("./images/lower-body.png"),
+    image: require("./images/3.png"),
   },
   {
     id: "back",
@@ -30,6 +30,6 @@ export const muscleGainOptions: FocusOption[] = [
   {
     id: "core",
     title: "Core",
-    image: require("./images/core.png"),
+    image: require("./images/4.png"),
   },
 ];

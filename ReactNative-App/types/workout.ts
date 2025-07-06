@@ -45,7 +45,8 @@ export type WorkoutGoalSport =
   | "Baseball"
   | "Ice Hockey"
   | "Volleyball"
-  | "Cycling";
+  | "Cycling"
+  | "Practical Shooting";
 
 export const WORKOUT_GOALS_SPORTS: WorkoutGoalSport[] = [
   "Golf",
@@ -57,6 +58,7 @@ export const WORKOUT_GOALS_SPORTS: WorkoutGoalSport[] = [
   "Ice Hockey",
   "Volleyball",
   "Cycling",
+  "Practical Shooting",
 ];
 
 export const WORKOUT_GOALS_SPORTS_DISPLAY: Record<WorkoutGoalSport, string> = {
@@ -69,6 +71,7 @@ export const WORKOUT_GOALS_SPORTS_DISPLAY: Record<WorkoutGoalSport, string> = {
   "Ice Hockey": "Ice Hockey 🏒",
   Volleyball: "Volleyball 🏐",
   Cycling: "Cycling 🚴",
+  "Practical Shooting": "Practical Shooting 🎯",
 };
 
 export interface Exercise {
@@ -97,4 +100,5 @@ export interface WorkoutPlan {
     duration: string;
     stretches: Exercise[];
   };
+  completedAt?: string;
 }

@@ -1,3 +1,5 @@
+import { useState, useEffect } from "react";
+
 import {
   StyleSheet,
   View,
@@ -18,10 +20,32 @@ import {
   WORKOUT_GOALS_DISPLAY,
   WORKOUT_GOALS_SPORTS_DISPLAY,
 } from "@/types/workout";
-
+import { fetchCompletedWorkouts } from "@/assets/services/storage/workoutStorage";
+import { getStreak } from "@/utils/streak";
 export default function Profile() {
   const { workoutData } = useWorkout();
   const screenWidth = Dimensions.get("window").width;
+  const [completedCount, setCompletedCount] = useState<number | null>(null);
+  const [Streak, setStreak] = useState<number | null>(null);
+
+  useEffect(() => {
+    const getCompletedCount = async () => {
+      const workouts = await fetchCompletedWorkouts();
+      if (workouts && workouts.length > 0) {
+        const streak = getStreak(
+          workouts
+            .filter((w) => typeof w.completedAt === "string")
+            .map((w) => ({ completedAt: w.completedAt as string }))
+        );
+        setStreak(streak);
+      } else {
+        setStreak(0);
+      }
+      setCompletedCount(Array.isArray(workouts) ? workouts.length : 0);
+    };
+    getCompletedCount();
+  }, []);
+
   let caption = "Welcome!";
   if (workoutData.userCreatedAt) {
     const created = new Date(workoutData.userCreatedAt);
@@ -38,6 +62,7 @@ export default function Profile() {
       caption = "Joined today";
     }
   }
+
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.overlay}>
@@ -81,7 +106,20 @@ export default function Profile() {
                   alignItems: "center",
                 }}
               >
-                <Text style={styles.goalText}>
+                <Text
+                  style={[
+                    styles.goalText,
+                    (
+                      WORKOUT_GOALS_DISPLAY[
+                        workoutData.goal as keyof typeof WORKOUT_GOALS_DISPLAY
+                      ] ||
+                      WORKOUT_GOALS_SPORTS_DISPLAY[
+                        workoutData.goal as keyof typeof WORKOUT_GOALS_SPORTS_DISPLAY
+                      ] ||
+                      workoutData.goal
+                    )?.length > 10 && { fontSize: 20 },
+                  ]}
+                >
                   {WORKOUT_GOALS_DISPLAY[
                     workoutData.goal as keyof typeof WORKOUT_GOALS_DISPLAY
                   ] ||
@@ -112,9 +150,15 @@ export default function Profile() {
           </View>
 
           <View style={styles.box}>
-            <Text style={styles.streakText}>🔥 3-Day Streak</Text>
-            <Text style={styles.lastSeen}>Last seen</Text>
-            <Text style={styles.lastSeenDate}>Yesterday</Text>
+            <Text style={styles.levelText}>Completed Workouts</Text>
+            <Text style={styles.completedCount}>
+              {completedCount !== null ? completedCount : "0"}
+            </Text>
+            {Streak !== null && Streak > 0 && (
+              <Text style={styles.streakText}>
+                🔥 {Streak} day{Streak > 1 ? "s" : ""} streak!
+              </Text>
+            )}
           </View>
         </View>
       </View>
@@ -214,6 +258,13 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
+  completedCount: {
+    color: colors.textPrimary,
+    fontSize: 50,
+    fontWeight: "600",
+    textAlign: "center",
+    position: "absolute",
+  },
   changeGoalText: {
     color: "#007AFF",
     fontSize: 14,
@@ -247,6 +298,7 @@ const styles = StyleSheet.create({
     color: "orange",
     fontSize: 14,
     fontWeight: "bold",
+    marginTop: 100,
   },
   lastSeen: {
     color: "gray",

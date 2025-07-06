@@ -5,6 +5,7 @@ import {
   View,
   FlatList,
   Alert,
+  SafeAreaView,
 } from "react-native";
 import { useState, useRef, JSX, useEffect } from "react";
 import { useWorkout } from "../contexts/WorkoutContext";
@@ -13,6 +14,8 @@ import Icon from "@expo/vector-icons/FontAwesome";
 import Animated, { FadeIn } from "react-native-reanimated";
 import { ChoosePrimaryGoal } from "@/components/ChoosePrimaryGoal";
 import { useLocalSearchParams, router } from "expo-router";
+import PagerView from "react-native-pager-view";
+
 import colors from "../styles/colors";
 interface QuestionItem {
   id: string;
@@ -20,27 +23,17 @@ interface QuestionItem {
 }
 export default function IntroScreen() {
   const { updateWorkoutData } = useWorkout();
-  const flatListRef = useRef<FlatList<QuestionItem>>(null);
+  const flatListRef = useRef<PagerView>(null);
   const [selectedGender, setSelectedGender] = useState<string | null>(null);
   const GENDER_OPTIONS = ["Female", "Male", "Other"];
   const params = useLocalSearchParams();
   const initialIndex = params.index ? Number(params.index) - 1 : 0;
   const [currentIndex, setCurrentIndex] = useState(initialIndex);
   const { workoutData } = useWorkout();
-  useEffect(() => {
-    if (initialIndex > 0) {
-      flatListRef.current?.scrollToIndex({
-        index: initialIndex,
-        animated: false,
-      });
-    }
-  }, []);
+
   const nextScreen = () => {
     if (currentIndex < questions.length - 1) {
-      flatListRef.current?.scrollToIndex({
-        index: currentIndex + 1,
-        animated: true,
-      });
+      flatListRef.current?.setPage(currentIndex + 1);
       setCurrentIndex(currentIndex + 1);
     } else {
       if (!workoutData.goal || workoutData.goal === "") {
@@ -83,8 +76,13 @@ export default function IntroScreen() {
               alignItems: "center",
               gap: 50,
               height: 400,
+              marginTop: 20,
             }}
           >
+            <Text style={styles.title}>
+              Just a few quick{" "}
+              <Text style={{ color: colors.primary }}>questions</Text>
+            </Text>
             <View>
               <Text style={styles.questionTitle}>
                 How would you rate your fitness experience?
@@ -143,33 +141,20 @@ export default function IntroScreen() {
   ];
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>
-        {currentIndex === 0 ? (
-          <>
-            Just a few quick{" "}
-            <Text style={{ color: colors.primary }}>questions</Text>
-          </>
-        ) : (
-          <>
-            Choose your primary{" "}
-            <Text style={{ color: colors.primary }}>goal</Text>
-          </>
-        )}
-      </Text>
-      <Animated.FlatList<QuestionItem>
-        ref={flatListRef}
-        data={questions}
-        renderItem={renderItem}
-        horizontal
-        pagingEnabled
-        showsHorizontalScrollIndicator={false}
-        scrollEnabled={false}
-        keyExtractor={(item) => item.id}
+    <SafeAreaView style={styles.container}>
+      <PagerView
         style={{ flex: 1, width: 350 }}
-        getItemLayout={getItemLayout}
-        contentContainerStyle={styles.flatListContainer}
-      />
+        initialPage={currentIndex}
+        scrollEnabled={true}
+        onPageSelected={(e) => setCurrentIndex(e.nativeEvent.position)}
+        ref={flatListRef}
+      >
+        {questions.map((item, idx) => (
+          <View key={item.id} style={styles.flatListContainer}>
+            {renderItem({ item })}
+          </View>
+        ))}
+      </PagerView>
 
       <TouchableOpacity style={styles.button} onPress={nextScreen}>
         <View style={styles.buttonContent}>
@@ -179,18 +164,16 @@ export default function IntroScreen() {
           <Icon name="chevron-right" size={20} color="#FFFFFF" />
         </View>
       </TouchableOpacity>
-    </View>
+    </SafeAreaView>
   );
 }
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: "center",
     alignItems: "center",
     backgroundColor: colors.background,
   },
   flatListContainer: {
-    justifyContent: "center",
     alignItems: "center",
   },
   buttonContent: {
@@ -201,10 +184,9 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 40,
     color: "#FFFFFF",
-    position: "absolute",
     textAlign: "left",
-    width: 330,
-    top: 100,
+    alignSelf: "center",
+    marginTop: 10,
     fontWeight: 400,
     letterSpacing: 1,
     lineHeight: 40,

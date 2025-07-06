@@ -70,6 +70,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: "500",
     marginBottom: 15,
+    maxWidth: 300,
   },
   date: {
     color: "#808080",

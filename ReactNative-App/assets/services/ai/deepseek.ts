@@ -264,7 +264,8 @@ export const generateWorkoutPlan = async (workoutData: WorkoutData) => {
         {
           role: "user",
           content: `Create a personalized workout plan with the following specifications:
-            - Primary Focus: ${workoutData.focus || "General"}
+           - Primary Focus: ${workoutData.focus || "General"}
+            If the user has selected a primary focus (e.g., speed, strength, agility), make sure that at least 85% of the generated workouts primarily develop this chosen focus area. If no focus is selected, the program can be more general.
             - Goal: ${workoutData.goal}
             - Experience Level: ${
               workoutData.level

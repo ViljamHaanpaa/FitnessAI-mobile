@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useEffect } from "react";
-import { StyleSheet, View, Text, FlatList } from "react-native";
+import { StyleSheet, View, Text, FlatList, SafeAreaView } from "react-native";
 import { useFocusEffect } from "expo-router";
 import { WorkoutPlan } from "@/types/workout";
 import { CollapsibleWorkout } from "@/components/CollapsibleWorkout";
@@ -34,16 +34,12 @@ export default function SavedWorkouts() {
   );
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       {savedWorkouts.length === 0 ? (
         <Text style={styles.noWorkouts}>No saved workouts yet...</Text>
       ) : (
         <FlatList
-          ListHeaderComponent={
-            <Text style={styles.title}>
-              Saved Workouts ({savedWorkouts.length})
-            </Text>
-          }
+          ListHeaderComponent={<Text style={styles.title}>My Plans </Text>}
           data={savedWorkouts}
           renderItem={renderWorkout}
           keyExtractor={(item, index) => index.toString()}
@@ -51,7 +47,7 @@ export default function SavedWorkouts() {
           showsVerticalScrollIndicator={false}
         />
       )}
-    </View>
+    </SafeAreaView>
   );
 }
 
@@ -85,12 +81,13 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   title: {
-    marginTop: 50,
-    fontSize: 20,
+    fontSize: 30,
+    width: 300,
     fontWeight: "400",
-    marginBottom: 16,
+    textAlign: "center",
     color: "#FFFFFF",
     alignSelf: "center",
+    marginBottom: 20,
   },
   stepContainer: {
     gap: 8,

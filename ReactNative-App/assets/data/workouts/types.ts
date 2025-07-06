@@ -21,4 +21,5 @@ export type WorkoutGoalSport =
   | "Baseball"
   | "Ice Hockey"
   | "Volleyball"
-  | "Cycling";
+  | "Cycling"
+  | "Practical Shooting";

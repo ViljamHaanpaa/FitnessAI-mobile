@@ -1,17 +1,20 @@
 {
   "expo": {
     "name": "Fittie",
-    "slug": "Fittie",
-    "version": "0.5.0",
+    "slug": "fittie",
+    "version": "0.6.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "Fittie",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": false,
+      "bundleIdentifier": "com.vilepala.fittie",
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false
+      }
     },
-
     "plugins": [
       "expo-router",
       [
@@ -28,6 +31,13 @@
     ],
     "experiments": {
       "typedRoutes": true
-    }
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "fe8a588b-4f3a-4fad-a1e9-8a4084a2effa"
+      }
+    },
+    "owner": "vilepala"
   }
 }

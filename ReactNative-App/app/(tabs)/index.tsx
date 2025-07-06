@@ -6,9 +6,13 @@ import {
   Text,
   View,
   SafeAreaView,
+  ScrollView,
 } from "react-native";
 import Icon from "@expo/vector-icons/FontAwesome";
-import { AutoReverseLottie } from "@/components/animations/AutoReverseLottie";
+import {
+  AutoReverseLottie,
+  LoadingTextCarousel,
+} from "@/components/animations/AutoReverseLottie";
 import { WorkoutPlanDisplay } from "@/components/WorkoutPlanDisplay";
 import { useWorkout } from "../../contexts/WorkoutContext";
 import { generateWorkoutPlan } from "../../assets/services/ai/deepseek";
@@ -128,7 +132,10 @@ export default function HomeScreen() {
           {
             id: "1",
             component: (
-              <View>
+              <ScrollView
+                contentContainerStyle={{ paddingBottom: 190 }}
+                showsVerticalScrollIndicator={false}
+              >
                 <View style={styles.titleContainer}>
                   <Text style={styles.title}>
                     What are we{" "}
@@ -172,7 +179,7 @@ export default function HomeScreen() {
                     </TouchableOpacity>
                   ))}
                 </View>
-              </View>
+              </ScrollView>
             ),
           },
         ]),
@@ -298,7 +305,7 @@ export default function HomeScreen() {
           {loading ? (
             <View style={{ top: 200, alignItems: "center" }}>
               <AutoReverseLottie />
-              <Text style={styles.loadingText}>Generating workout plan...</Text>
+              <LoadingTextCarousel />
             </View>
           ) : (
             <WorkoutPlanDisplay
@@ -400,7 +407,7 @@ const styles = StyleSheet.create({
   },
   optionText: {
     color: "#FFFFFF",
-    fontSize: 16,
+    fontSize: 15,
     width: 100,
     fontWeight: "500",
     textAlign: "center",
