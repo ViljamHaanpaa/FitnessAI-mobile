@@ -10,7 +10,7 @@
     "newArchEnabled": true,
     "ios": {
       "supportsTablet": false,
-      "bundleIdentifier": "com.vilepala.fittie",
+      "bundleIdentifier": "com.fittie.app",
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false
       }
@@ -32,12 +32,12 @@
     "experiments": {
       "typedRoutes": true
     },
+    "owner": "fittie",
     "extra": {
       "router": {},
       "eas": {
-        "projectId": "fe8a588b-4f3a-4fad-a1e9-8a4084a2effa"
+        "projectId": "4e62e45d-6201-4ebb-bc17-31f7695eec72"
       }
-    },
-    "owner": "vilepala"
+    }
   }
 }
