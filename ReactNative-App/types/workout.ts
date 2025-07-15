@@ -5,6 +5,7 @@ export interface WorkoutData {
   duration: string;
   equipment: string;
   focus: string;
+  focusPrompt?: string;
   workoutGenerated: boolean;
   currentWorkoutPlan: WorkoutPlan | null;
   workoutActive: boolean;

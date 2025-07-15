@@ -10,6 +10,9 @@ import {
   Alert,
 } from "react-native";
 import Icon from "@expo/vector-icons/FontAwesome";
+import { BlurView } from "expo-blur";
+import { LinearGradient } from "expo-linear-gradient";
+
 import {
   AutoReverseLottie,
   LoadingTextCarousel,
@@ -80,16 +83,14 @@ export default function HomeScreen() {
   const getCurrentFocusOptions = () => {
     if (!workoutData.goal) return [];
 
-    // Check if it's a sport goal
     if (WORKOUT_GOALS_SPORTS.includes(workoutData.goal as WorkoutGoalSport)) {
       return (
         WORKOUT_FOCUS_OPTIONS_SPORTS[workoutData.goal as WorkoutGoalSport] || []
       );
     }
-    // Return regular fitness focus options
+
     return WORKOUT_FOCUS_OPTIONS[workoutData.goal as WorkoutGoal] || [];
   };
-  let MAX_RETRIES = 3;
 
   const generatePlan = async () => {
     setLoading(true);
@@ -173,7 +174,12 @@ export default function HomeScreen() {
                         workoutData.focus === option.title &&
                           styles.selectedButton,
                       ]}
-                      onPress={() => updateWorkoutData({ focus: option.title })}
+                      onPress={() =>
+                        updateWorkoutData({
+                          focus: option.title,
+                          focusPrompt: option.prompt,
+                        })
+                      }
                     >
                       <View
                         style={{
@@ -305,6 +311,31 @@ export default function HomeScreen() {
               />
             ))}
           </View>
+          <View
+            style={{
+              position: "absolute",
+              bottom: 75,
+              width: "100%",
+              height: 100,
+            }}
+          >
+            <BlurView
+              intensity={20}
+              tint="dark"
+              style={{
+                ...StyleSheet.absoluteFillObject,
+              }}
+            />
+            <LinearGradient
+              colors={[
+                "rgba(9,21,33,0.0)", // ylhäällä täysin läpinäkyvä
+                "rgba(9,21,33,0.05)", // kevyttä sävyä
+                "rgba(9,21,33,0.1)", // vähän enemmän
+                "rgba(9,21,33,0.15)", // alhaalla "sumuisin"
+              ]}
+              style={StyleSheet.absoluteFill}
+            />
+          </View>
           <TouchableOpacity onPress={nextScreen} style={styles.generateButton}>
             <View style={styles.buttonContent}>
               <Text style={styles.buttontitle}>
@@ -318,8 +349,12 @@ export default function HomeScreen() {
         <>
           {loading ? (
             <View style={{ top: 200, alignItems: "center" }}>
-              <AutoReverseLottie />
               <LoadingTextCarousel />
+
+              <AutoReverseLottie />
+              <Text style={styles.loadingText}>
+                Hold on a sec! Your workout’s loading — don’t close the app.
+              </Text>
             </View>
           ) : (
             <WorkoutPlanDisplay
@@ -503,6 +538,7 @@ const styles = StyleSheet.create({
     color: colors.textHighlight,
     textAlign: "center",
     fontWeight: "500",
+    width: 250,
   },
 
   errorText: {

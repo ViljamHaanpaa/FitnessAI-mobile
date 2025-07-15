@@ -3,6 +3,7 @@ export interface FocusOption {
   id: string;
   title: string;
   image?: ImageSourcePropType;
+  prompt?: string;
 }
 export type WorkoutGoal =
   | "Weight Loss"

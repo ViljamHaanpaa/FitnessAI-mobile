@@ -2,7 +2,6 @@ import { WorkoutData } from "@/types/workout";
 const DEEPSEEK_API_KEY = process.env.EXPO_PUBLIC_DEEPSEEK_API_KEY;
 const API_URL = "https://api.deepseek.com/v1/chat/completions";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-
 const GENERATED_WORKOUT_PLANS_KEY = "GeneratedWorkoutPlans";
 
 // Save a generated plan to AsyncStorage (keep only last 5)
@@ -30,10 +29,34 @@ async function getGeneratedWorkoutHistory(count = 3) {
 }
 
 export const generateWorkoutPlan = async (workoutData: WorkoutData) => {
-  const startTime = Date.now(); // Start timer
-  console.log("Generating workout plan...");
+  const startTime = Date.now();
   const recentHistory = await getGeneratedWorkoutHistory(3);
-  console.log("Recent generated workout history:", recentHistory);
+  const recentExerciseNames = recentHistory
+    .flatMap(
+      (plan: any) =>
+        plan.mainWorkout?.exercises?.map((ex: any) => ex.name) || []
+    )
+    .filter(Boolean);
+
+  // Remove duplicates
+  const uniqueRecentExerciseNames = [...new Set(recentExerciseNames)];
+  const isSportSpecific =
+    workoutData.equipment === "Sport-Specific Equipment 🏌️‍♂️⚽️";
+
+  const sportDrillInstruction = isSportSpecific
+    ? `
+IMPORTANT: The user has selected sport-specific equipment. Generate a workout composed of real sport-specific drills and practice activities — not general fitness exercises.
+Focus on movements that directly replicate the sport itself, such as swings, shots, serves, or technique work.
+For example:
+Golf: "10 chip shots to the green, 3 sets", "5 driver swings with technique tips", "20 full iron swings at the range"
+Hockey: "15 slapshots", "10 wrist shots", "stickhandling drills with puck control focus"
+The workout should include:
+Actual repetitions of sport-specific movements
+Set and rep structure
+Technique or focus cues (e.g. "focus on wrist release", "control tempo")
+Avoid general fitness exercises (like squats or push-ups) unless absolutely necessary for skill transfer. Prioritize realistic, skill-based sport practice.
+`
+    : "";
   const toolSchema = {
     type: "function",
     function: {
@@ -88,11 +111,6 @@ export const generateWorkoutPlan = async (workoutData: WorkoutData) => {
                       },
                       additionalProperties: true,
                     },
-                    wikihow: {
-                      type: "string",
-                      description:
-                        "WikiHow link for the exercise, if available",
-                    },
                   },
                   required: [
                     "name",
@@ -100,7 +118,6 @@ export const generateWorkoutPlan = async (workoutData: WorkoutData) => {
                     "duration",
                     "description",
                     "instructions",
-                    "wikihow",
                   ],
                 },
               },
@@ -149,11 +166,6 @@ export const generateWorkoutPlan = async (workoutData: WorkoutData) => {
                       },
                       additionalProperties: true,
                     },
-                    wikihow: {
-                      type: "string",
-                      description:
-                        "WikiHow link for the exercise, if available",
-                    },
                   },
                   required: [
                     "name",
@@ -163,7 +175,6 @@ export const generateWorkoutPlan = async (workoutData: WorkoutData) => {
                     "rest",
                     "description",
                     "instructions",
-                    "wikihow",
                   ],
                 },
               },
@@ -208,10 +219,6 @@ export const generateWorkoutPlan = async (workoutData: WorkoutData) => {
                       },
                       additionalProperties: true,
                     },
-                    wikihow: {
-                      type: "string",
-                      description: "WikiHow link for the stretch, if available",
-                    },
                   },
                   required: [
                     "name",
@@ -219,7 +226,6 @@ export const generateWorkoutPlan = async (workoutData: WorkoutData) => {
                     "duration",
                     "description",
                     "instructions",
-                    "wikihow",
                   ],
                 },
               },
@@ -253,14 +259,19 @@ export const generateWorkoutPlan = async (workoutData: WorkoutData) => {
         {
           role: "system",
           content:
-            "You are a helpful fitness assistant that returns strictly structured JSON based on tool definitions.",
+            "You are a creative and knowledgeable fitness assistant. Always generate strictly structured JSON based on tool definitions. For each new request, provide fresh, varied, and engaging workout plans—even if the input is similar to previous ones. Ensure all workouts are safe, effective, and tailored to the user's needs. Avoid repeating the same exercises or routines in consecutive plans.",
         },
         {
           role: "user",
           content: `Create a personalized workout plan with the following specifications:
           If the user requests a new plan, always generate a different workout than previous ones, even if the input is the same.
            - Variety seed: ${varietySeed}
-           - Primary Focus: ${workoutData.focus || "General"}
+           - Primary Focus: ${workoutData.focus || "General"} 
+           ${
+             workoutData.focusPrompt
+               ? "\n- Focus Prompt: " + workoutData.focusPrompt
+               : ""
+           }
             If the user has selected a primary focus (e.g., speed, strength, agility), make sure that at least 85% of the generated workouts primarily develop this chosen focus area. If no focus is selected, the program can be more general.
             - Goal: ${workoutData.goal}
             - Experience Level: ${
@@ -269,13 +280,13 @@ export const generateWorkoutPlan = async (workoutData: WorkoutData) => {
             - Gender: ${workoutData.gender}
             - Available Equipment: ${
               workoutData.equipment || "Bodyweight only"
-            } (if gym equipment is available, please include more of them example dumbbells, barbell, cable machine, Barbell, leg press etc. of course use them according to the goal)
+            } (if gym equipment is available, please include more of them example dumbbells, barbell, cable machine, Barbell, leg press etc. of course use them according to the goal) if user chose
             - Duration: ${workoutData.duration || "45"} minutes
             - Session Type: Progressive workout targeting ${workoutData.goal}
             - Timestamp: ${new Date().toISOString()}
 
-            Recent workout history (for variety and progression): (try not to repeat these exercises too much)
-            ${JSON.stringify(recentHistory, null, 2)}
+              Recent exercise names from previous workouts (avoid repeating these in this plan):
+              ${uniqueRecentExerciseNames.map((name) => `- ${name}`).join("\n")}
             
              IMPORTANT:
             - All durations must be given as a string representing the number of seconds (e.g. "120"), NOT as text like "2 minutes".
@@ -283,7 +294,7 @@ export const generateWorkoutPlan = async (workoutData: WorkoutData) => {
 
             For each exercise, include:
             - a short, clear instruction string (e.g. "Stand shoulder-width apart. Hinge at the hips, back straight. Hold dumbbells with palms in. Pull elbows back, squeeze shoulder blades.")
-
+            ${sportDrillInstruction}
             Please structure the workout with proper warm-up, main exercises, and cool-down sections.`,
         },
       ],
