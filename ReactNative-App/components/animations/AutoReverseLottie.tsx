@@ -47,21 +47,21 @@ export const AutoReverseLottie = ({ showCarousel = false }) => {
 
 // Vertical text carousel below the Lottie animation
 const loadingTexts = [
-  "Generating workout plan...",
+  "Creating your workout plan...",
+  "Generating optimal routines...",
   "Finding the best exercises...",
-  "Almost ready...",
-  "Finalizing your plan...",
-  "Optimizing for your goals...",
+  "Matching exercises to your goals...",
   "Selecting the right intensity...",
+  "Tailoring reps and sets...",
   "Customizing your routine...",
+  "Optimizing for your preferences...",
+  "Finalizing your plan...",
   "Adding finishing touches...",
   "Warming up your muscles...",
   "Loading exercise details...",
   "Setting up your schedule...",
   "Almost there...",
-  "Just a moment...",
-  "Getting everything ready...",
-  "You got this!",
+  "This is taking longer than it should...",
 ];
 
 export const LoadingTextCarousel = () => {

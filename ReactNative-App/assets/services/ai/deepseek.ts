@@ -3,43 +3,37 @@ const DEEPSEEK_API_KEY = process.env.EXPO_PUBLIC_DEEPSEEK_API_KEY;
 const API_URL = "https://api.deepseek.com/v1/chat/completions";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-export const getRecentWorkoutHistory = async (count = 5) => {
-  const completedWorkoutsString = await AsyncStorage.getItem(
-    "CompletedWorkouts"
-  );
-  if (!completedWorkoutsString) return [];
-  const completedWorkouts = JSON.parse(completedWorkoutsString);
-  return completedWorkouts.slice(-count).map((w: any) => {
-    let completedExercises: string[] = [];
-    if (
-      w.completedExercises &&
-      typeof w.completedExercises === "object" &&
-      !Array.isArray(w.completedExercises)
-    ) {
-      completedExercises = Object.entries(w.completedExercises)
-        .filter(
-          ([name, done]) =>
-            done && typeof name === "string" && isNaN(Number(name))
-        )
-        .map(([name]) => name);
-    } else if (Array.isArray(w.completedExercises)) {
-      // fallback for legacy/bad data
-      completedExercises = (w.completedExercises as string[]).filter(
-        (v: string) => typeof v === "string" && isNaN(Number(v))
-      );
-    }
-    return {
-      title: w.title,
-      date: w.completedAt,
-      completedExercises,
-    };
-  });
-};
+const GENERATED_WORKOUT_PLANS_KEY = "GeneratedWorkoutPlans";
+
+// Save a generated plan to AsyncStorage (keep only last 5)
+async function saveGeneratedWorkoutPlan(plan: any) {
+  try {
+    const prev = await AsyncStorage.getItem(GENERATED_WORKOUT_PLANS_KEY);
+    const plans = prev ? JSON.parse(prev) : [];
+    plans.push({ ...plan, createdAt: new Date().toISOString() });
+    if (plans.length > 5) plans.shift();
+    await AsyncStorage.setItem(
+      GENERATED_WORKOUT_PLANS_KEY,
+      JSON.stringify(plans)
+    );
+  } catch (e) {
+    console.warn("Failed to save generated workout plan", e);
+  }
+}
+
+// Get last N generated plans
+async function getGeneratedWorkoutHistory(count = 3) {
+  const prev = await AsyncStorage.getItem(GENERATED_WORKOUT_PLANS_KEY);
+  if (!prev) return [];
+  const plans = JSON.parse(prev);
+  return plans.slice(-count);
+}
 
 export const generateWorkoutPlan = async (workoutData: WorkoutData) => {
+  const startTime = Date.now(); // Start timer
   console.log("Generating workout plan...");
-  const recentHistory = await getRecentWorkoutHistory(5);
-  console.log("Recent workout history:", recentHistory);
+  const recentHistory = await getGeneratedWorkoutHistory(3);
+  console.log("Recent generated workout history:", recentHistory);
   const toolSchema = {
     type: "function",
     function: {
@@ -246,7 +240,7 @@ export const generateWorkoutPlan = async (workoutData: WorkoutData) => {
       },
     },
   };
-
+  const varietySeed = Math.floor(Math.random() * 1000000);
   const response = await fetch(API_URL, {
     method: "POST",
     headers: {
@@ -264,6 +258,8 @@ export const generateWorkoutPlan = async (workoutData: WorkoutData) => {
         {
           role: "user",
           content: `Create a personalized workout plan with the following specifications:
+          If the user requests a new plan, always generate a different workout than previous ones, even if the input is the same.
+           - Variety seed: ${varietySeed}
            - Primary Focus: ${workoutData.focus || "General"}
             If the user has selected a primary focus (e.g., speed, strength, agility), make sure that at least 85% of the generated workouts primarily develop this chosen focus area. If no focus is selected, the program can be more general.
             - Goal: ${workoutData.goal}
@@ -293,8 +289,8 @@ export const generateWorkoutPlan = async (workoutData: WorkoutData) => {
       ],
       tools: [toolSchema],
       tool_choice: { type: "function", function: { name: "get_workout_plan" } },
-      temperature: 0.9,
-      max_tokens: 3000,
+      temperature: 0.7,
+      max_tokens: 1500,
       top_p: 0.9,
     }),
   });
@@ -320,6 +316,10 @@ export const generateWorkoutPlan = async (workoutData: WorkoutData) => {
 
   try {
     const workoutPlan = JSON.parse(toolCall.function.arguments);
+    await saveGeneratedWorkoutPlan(workoutPlan);
+    const endTime = Date.now(); // End timer
+    const duration = (endTime - startTime) / 800; // seconds
+    console.log(`Workout generation took ${duration.toFixed(2)} seconds`);
     console.log("Successfully parsed structured workout plan:", workoutPlan);
     return workoutPlan;
   } catch (err) {

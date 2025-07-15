@@ -1,11 +1,11 @@
 {
   "expo": {
-    "name": "Fittie",
+    "name": "FitLane",
     "slug": "fittie",
-    "version": "0.6.0",
+    "version": "0.6.2",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "Fittie",
+    "scheme": "fittie",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {

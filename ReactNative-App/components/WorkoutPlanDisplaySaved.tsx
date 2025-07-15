@@ -4,6 +4,7 @@ import colors from "@/styles/colors";
 import Icon from "@expo/vector-icons/FontAwesome";
 import { useWorkout } from "@/contexts/WorkoutContext";
 import { router } from "expo-router";
+import { Colors } from "react-native/Libraries/NewAppScreen";
 export const WorkoutPlanDisplay = ({ plan }: { plan: WorkoutPlan | null }) => {
   const { updateWorkoutData, workoutData } = useWorkout();
   if (!plan) return null;
@@ -73,8 +74,8 @@ export const WorkoutPlanDisplay = ({ plan }: { plan: WorkoutPlan | null }) => {
       </View>
       <TouchableOpacity style={styles.generateButton} onPress={startWorkout}>
         <View style={styles.buttonContent}>
-          <Text style={styles.buttontitle}> Use Workout</Text>
-          <Icon name="chevron-right" size={20} color="#FFFFFF" />
+          <Text style={styles.buttontitle}> Use this Workout</Text>
+          <Icon name="chevron-right" size={20} color={colors.highlight} />
         </View>
       </TouchableOpacity>
     </View>
@@ -133,14 +134,14 @@ const styles = StyleSheet.create({
     width: 290,
   },
   buttontitle: {
-    color: "#FFFFFF",
+    color: colors.text,
     fontSize: 19,
     fontWeight: 600,
     textAlign: "left",
     paddingLeft: 20,
   },
   generateButton: {
-    backgroundColor: colors.greenPrimary,
+    backgroundColor: colors.primary,
     width: 320,
     height: 75,
     alignSelf: "center",
@@ -148,7 +149,7 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     borderCurve: "continuous",
     justifyContent: "center",
-    shadowColor: colors.greenPrimary,
+    shadowColor: colors.primary,
     shadowOpacity: 0.4,
     shadowRadius: 12,
     elevation: 5,

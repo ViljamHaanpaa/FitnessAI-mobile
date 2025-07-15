@@ -25,4 +25,19 @@ export const golfOptions: FocusOption[] = [
     title: "Golf Core Stability",
     image: require("./images/stability.png"),
   },
+  {
+    id: "golf-short-game",
+    title: "Short Game Skills",
+    image: require("./images/shortgameskills.png"),
+  },
+  {
+    id: "golf-swing",
+    title: "Swing Technique",
+    image: require("./images/swingtechnique.png"),
+  },
+  {
+    id: "golf-speed",
+    title: "Swing Speed",
+    image: require("./images/swingspeed.png"),
+  },
 ];

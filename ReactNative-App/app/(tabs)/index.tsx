@@ -7,6 +7,7 @@ import {
   View,
   SafeAreaView,
   ScrollView,
+  Alert,
 } from "react-native";
 import Icon from "@expo/vector-icons/FontAwesome";
 import {
@@ -53,9 +54,10 @@ export default function HomeScreen() {
   );
 
   const equipment = [
-    "No Equipment",
-    "Home Gym Equipment",
-    "Basic Gym Equipment ",
+    "No Equipment 🏃‍♂️",
+    "Home Gym Equipment 🏠🏋️",
+    "Basic Gym Equipment 🏋️‍♂️",
+    "Sport-Specific Equipment 🏌️‍♂️⚽️",
   ];
 
   const nextScreen = () => {
@@ -96,35 +98,47 @@ export default function HomeScreen() {
         throw new Error("Missing workout data");
       }
       setShowErrorMessage(false);
-      for (let i = 0; i < MAX_RETRIES; i++) {
-        try {
-          const generatedPlan = await generateWorkoutPlan(workoutData);
-          if (generatedPlan) {
-            console.log("Generated plan:", generatedPlan);
-            updateWorkoutData({
-              workoutGenerated: true,
-              currentWorkoutPlan: generatedPlan,
-            });
-            return;
-          }
-        } catch (error) {
-          console.error(`Attempt ${i + 1} failed:`, error);
-          if (i === MAX_RETRIES - 1) {
-            throw error;
-          }
+
+      try {
+        const generatedPlan = await generateWorkoutPlan(workoutData);
+        if (generatedPlan) {
+          console.log("Generated plan:", generatedPlan);
+          updateWorkoutData({
+            workoutGenerated: true,
+            currentWorkoutPlan: generatedPlan,
+          });
+          return;
         }
+      } catch (error) {
+        throw error;
       }
+
       throw new Error(
         "Failed to generate workout plan after multiple attempts"
       );
     } catch (error) {
       console.error("Error generating plan:", error);
-      setShowErrorMessage(true);
+      showErrorAlert();
     } finally {
       setLoading(false);
     }
   };
 
+  const showErrorAlert = () => {
+    Alert.alert(
+      "Error",
+      "Failed to generate workout plan. Please try again.",
+      [
+        {
+          text: "OK",
+          onPress: () => {
+            updateWorkoutData({ currentWorkoutPlan: null });
+          },
+        },
+      ],
+      { cancelable: false }
+    );
+  };
   const questions: QuestionItem[] = [
     ...(workoutData.goal && !getCurrentFocusOptions().length
       ? []
@@ -235,7 +249,7 @@ export default function HomeScreen() {
             }}
           >
             <Text style={styles.questionTitle}>
-              Slide to choose how long you want to train.
+              Select your workout duration
             </Text>
             <View style={styles.sliderValues}>
               <Text style={styles.sliderValuesText}>15 min</Text>
@@ -314,13 +328,6 @@ export default function HomeScreen() {
             />
           )}
         </>
-      )}
-      {showErrorMessage && (
-        <View style={styles.errorContainer}>
-          <Text style={styles.errorText}>
-            Error generating workout plan. Please try again.
-          </Text>
-        </View>
       )}
     </SafeAreaView>
   );
@@ -497,18 +504,7 @@ const styles = StyleSheet.create({
     textAlign: "center",
     fontWeight: "500",
   },
-  errorContainer: {
-    display: "flex",
-    flexDirection: "row",
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "#F4405F",
-    padding: 20,
-    borderRadius: 20,
-    borderCurve: "continuous",
-    marginTop: 70,
-    alignSelf: "center",
-  },
+
   errorText: {
     color: "white",
     fontSize: 18,

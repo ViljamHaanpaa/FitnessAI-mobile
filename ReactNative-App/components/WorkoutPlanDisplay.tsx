@@ -65,31 +65,43 @@ export const WorkoutPlanDisplay = ({
   if (!plan) return null;
 
   const handleBackPress = () => {
-    Alert.alert(
-      "Discard Workout",
-      "Are you sure you want to discard this workout?",
-      [
-        {
-          text: "Cancel",
-          style: "cancel",
-        },
-        {
-          text: "Discard",
-          style: "destructive",
-          onPress: () => {
-            updateWorkoutData({
-              workoutGenerated: false,
-              focus: "",
-              duration: "",
-              equipment: "",
-              currentWorkoutPlan: null,
-            });
-            setCurrentIndex(0);
+    console.log(hasSaved);
+    if (hasSaved) {
+      setCurrentIndex(0);
+      updateWorkoutData({
+        workoutGenerated: false,
+        focus: "",
+        duration: "",
+        equipment: "",
+        currentWorkoutPlan: null,
+      });
+    } else {
+      Alert.alert(
+        "Discard Workout",
+        "Are you sure you want to discard this workout?",
+        [
+          {
+            text: "Cancel",
+            style: "cancel",
           },
-        },
-      ],
-      { cancelable: true }
-    );
+          {
+            text: "Discard",
+            style: "destructive",
+            onPress: () => {
+              updateWorkoutData({
+                workoutGenerated: false,
+                focus: "",
+                duration: "",
+                equipment: "",
+                currentWorkoutPlan: null,
+              });
+              setCurrentIndex(0);
+            },
+          },
+        ],
+        { cancelable: true }
+      );
+    }
   };
   const handleSave = async () => {
     if (hasSaved) return;
@@ -115,7 +127,7 @@ export const WorkoutPlanDisplay = ({
               onPress={handleBackPress}
               style={styles.saveButton}
             >
-              <Text style={{ color: "red", fontSize: 16 }}>Discard</Text>
+              <Text style={{ color: "red", fontSize: 16 }}>Back</Text>
             </TouchableOpacity>
             <TouchableOpacity
               onPress={handleSave}
